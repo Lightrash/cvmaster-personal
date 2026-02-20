@@ -1,0 +1,8 @@
+POST http://localhost:5000/api/applications
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "candidateId": "{{CANDIDATE_ID}}",
+  "vacancyId": "{{VACANCY_ID}}"
+}
