@@ -4,44 +4,65 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const { getJwtSecret } = require('../config/jwt');
 
-// Функція для створення токена
 const generateToken = (id) => {
   return jwt.sign({ id }, getJwtSecret(), { expiresIn: '30d' });
 };
 
-// РЕЄСТРАЦІЯ
 router.post('/register', async (req, res) => {
   try {
-    const { name, login, password } = req.body;
-    const userExists = await User.findOne({ login });
+    const { name, email, password } = req.body;
 
-    if (userExists) return res.status(400).json({ message: 'Користувач вже існує' });
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Name, email and password are required' });
+    }
 
-    const user = await User.create({ name, login, password });
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const userExists = await User.findOne({ email: normalizedEmail });
+
+    if (userExists) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    const user = await User.create({
+      name: String(name).trim(),
+      email: normalizedEmail,
+      password
+    });
 
     res.status(201).json({
       _id: user._id,
       name: user.name,
-      token: generateToken(user._id) // Видаємо токен
+      token: generateToken(user._id)
     });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 });
 
-// АВТОРИЗАЦІЯ (LOGIN)
 router.post('/login', async (req, res) => {
-  const { login, password } = req.body;
-  const user = await User.findOne({ login });
+  try {
+    const { email, password } = req.body;
 
-  if (user && (await user.matchPassword(password))) {
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const user =
+      (await User.findOne({ email: normalizedEmail })) ||
+      (await User.findOne({ login: normalizedEmail }));
+
+    if (!user || !(await user.matchPassword(password))) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
     res.json({
       _id: user._id,
       name: user.name,
       token: generateToken(user._id)
     });
-  } else {
-    res.status(401).json({ message: 'Невірний логін або пароль' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 

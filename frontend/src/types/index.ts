@@ -1,10 +1,21 @@
 export type ColumnStatus = 'New' | 'Screening' | 'Interview' | 'Test Task' | 'Offer' | 'Hired' | 'Rejected';
 
+export interface CandidateStatusHistoryEntry {
+    from: ColumnStatus | null;
+    to: ColumnStatus;
+    changedAt: string;
+    changedBy?: string;
+    reason?: string;
+    comment?: string;
+}
+
 export interface Candidate {
     id: string;
     name: string;
     surname: string;
+    vacancyId?: string | null;
     position: string;
+    ownerId?: string;
     avatar: string;
     progress: number;
     deadline: string;
@@ -12,6 +23,15 @@ export interface Candidate {
     phone?: string;
     linkedin?: string;
     status: ColumnStatus;
+    stageEnteredAt?: string | null;
+    nextActionAt?: string | null;
+    rejectionReason?: string;
+    statusHistory?: CandidateStatusHistoryEntry[];
+    isOverdue?: boolean;
+    rejectedAt?: string | null;
+    trashDeleteAfter?: string | null;
+    createdAt?: string;
+    updatedAt?: string;
     resumeFile?: File | null;
     resumeAnalysis?: ResumeAnalysis | null;
 }
@@ -62,4 +82,10 @@ export interface MatchResult {
     strengths: string[];
     gaps: string[];
     recommendation: 'Proceed' | 'Review manually' | 'Reject';
+}
+
+export interface AuthUser {
+    id: string;
+    name: string;
+    token: string;
 }

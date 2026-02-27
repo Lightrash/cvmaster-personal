@@ -34,6 +34,7 @@ import {
   FileText,
   Linkedin,
   TrendingUp,
+  X,
 } from 'lucide-react';
 import type { Candidate, ColumnStatus, MatchResult, ResumeAnalysis } from '@/types';
 
@@ -110,8 +111,17 @@ export function CandidateProfilePage() {
       setPhone(pendingAnalysis.phone || '');
       setPosition(pendingAnalysis.position || '');
       setLinkedinUrl(pendingAnalysis.linkedin || '');
+
+      const matchedJob = jobs.find(
+        (job) =>
+          job.status === 'Active' &&
+          job.title.toLowerCase() === String(pendingAnalysis.position || '').trim().toLowerCase()
+      );
+      if (matchedJob) {
+        setSelectedJobId(matchedJob.id);
+      }
     }
-  }, [pendingAnalysis]);
+  }, [jobs, pendingAnalysis]);
 
   useEffect(() => {
     if (!jobsLoaded) {
@@ -137,6 +147,7 @@ export function CandidateProfilePage() {
         setPosition(candidate.position || '');
         setLinkedinUrl(candidate.linkedin || '');
         setStatus(candidate.status || 'New');
+        setSelectedJobId(candidate.vacancyId || '');
       })
       .catch((error) => {
         if (isCancelled) return;
@@ -164,9 +175,17 @@ export function CandidateProfilePage() {
     analysis.technologies.length > 0;
 
   const [selectedJobId, setSelectedJobId] = useState('');
+  const [matchedJobTitle, setMatchedJobTitle] = useState<string | null>(null);
   const [matchResult, setMatchResult] = useState<MatchResult | null>(null);
   const [isMatching, setIsMatching] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string>('');
+
+  useEffect(() => {
+    if (!saveError) return;
+    const timer = window.setTimeout(() => setSaveError(''), 5000);
+    return () => window.clearTimeout(timer);
+  }, [saveError]);
 
   if (!isCreateMode && isLoadingCandidate) {
     return (
@@ -187,7 +206,7 @@ export function CandidateProfilePage() {
           <Button
             variant="ghost"
             className="mt-3 cursor-pointer"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/candidates')}
           >
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to board
           </Button>
@@ -206,7 +225,7 @@ export function CandidateProfilePage() {
           <Button
             variant="ghost"
             className="mt-3 cursor-pointer"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/candidates')}
           >
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to board
           </Button>
@@ -224,6 +243,7 @@ export function CandidateProfilePage() {
     try {
       const result = await matchCandidateToJob(analysis, job);
       setMatchResult(result);
+      setMatchedJobTitle(job.title);
     } catch (err) {
       console.error('Match failed:', err);
     } finally {
@@ -232,7 +252,12 @@ export function CandidateProfilePage() {
   };
 
   const handleSave = async () => {
+    setSaveError('');
     if (!firstName.trim() || !lastName.trim()) return;
+    if (isCreateMode && !selectedJobId) {
+      setSaveError('Select a vacancy before creating candidate.');
+      return;
+    }
 
     setIsSaving(true);
     try {
@@ -243,12 +268,14 @@ export function CandidateProfilePage() {
       const progressSource = analysis.overallScore || existingCandidate?.progress || 0;
       const progress = Math.max(0, Math.min(100, Math.round(progressSource * 10)));
       const resumeAnalysisPayload = hasAnalysisData ? analysis : null;
+      const selectedVacancy = jobs.find((job) => job.id === selectedJobId) || null;
 
       if (isCreateMode) {
         await addCandidate({
           name: firstName.trim(),
           surname: lastName.trim(),
-          position: position.trim(),
+          vacancyId: selectedJobId || null,
+          position: selectedVacancy?.title || position.trim(),
           email: email.trim(),
           phone: phone.trim(),
           linkedin: linkedinUrl.trim(),
@@ -262,7 +289,8 @@ export function CandidateProfilePage() {
         await updateCandidate(id, {
           name: firstName.trim(),
           surname: lastName.trim(),
-          position: position.trim(),
+          vacancyId: selectedJobId || null,
+          position: selectedVacancy?.title || position.trim(),
           email: email.trim(),
           phone: phone.trim(),
           linkedin: linkedinUrl.trim(),
@@ -275,9 +303,12 @@ export function CandidateProfilePage() {
       }
 
       clearPendingCandidate();
-      navigate('/');
+      navigate('/candidates');
     } catch (err) {
       console.error('Save failed:', err);
+      setSaveError(
+        err instanceof Error ? err.message : 'Failed to create candidate. Try again.'
+      );
     } finally {
       setIsSaving(false);
     }
@@ -285,7 +316,7 @@ export function CandidateProfilePage() {
 
   const handleBack = () => {
     clearPendingCandidate();
-    navigate('/');
+    navigate('/candidates');
   };
 
   const getScoreColor = (score: number) => {
@@ -340,7 +371,12 @@ export function CandidateProfilePage() {
         actions={
           <Button
             onClick={handleSave}
-            disabled={!firstName.trim() || !lastName.trim() || isSaving}
+            disabled={
+              !firstName.trim() ||
+              !lastName.trim() ||
+              (isCreateMode && !selectedJobId) ||
+              isSaving
+            }
             className="gap-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-5 text-[13px] h-9 cursor-pointer font-medium disabled:opacity-50"
           >
             {isSaving ? (
@@ -403,6 +439,30 @@ export function CandidateProfilePage() {
                   />
                 </div>
                 <div>
+                  <label className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 mb-1 block">
+                    Vacancy {isCreateMode ? '*' : ''}
+                  </label>
+                  <Select
+                    value={isCreateMode ? selectedJobId : (selectedJobId || '__none__')}
+                    onValueChange={(value) => {
+                      setSelectedJobId(value === '__none__' ? '' : value);
+                      setSaveError('');
+                    }}
+                  >
+                    <SelectTrigger className="w-full rounded-lg h-9 text-[13px]">
+                      <SelectValue placeholder="Select vacancy..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {!isCreateMode && <SelectItem value="__none__">No vacancy</SelectItem>}
+                      {activeJobs.map((job) => (
+                        <SelectItem key={job.id} value={job.id}>
+                          {job.title} - {job.department}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
                   <label className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 mb-1 block flex items-center gap-1">
                     <Briefcase className="w-3 h-3" /> Position
                   </label>
@@ -442,7 +502,6 @@ export function CandidateProfilePage() {
                         'Test Task',
                         'Offer',
                         'Hired',
-                        'Rejected',
                       ].map((s) => (
                         <SelectItem key={s} value={s}>
                           {s}
@@ -558,103 +617,6 @@ export function CandidateProfilePage() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 p-5">
-              <h2 className="text-[14px] font-bold text-neutral-800 dark:text-neutral-200 mb-4 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-indigo-500" />
-                Match with Vacancy
-              </h2>
-
-              {!hasAnalysisData && (
-                <p className="mb-3 text-[12px] text-neutral-500 dark:text-neutral-400">
-                  This candidate has no saved AI analysis yet. Upload and analyze CV to enable matching.
-                </p>
-              )}
-
-              <div className="flex items-center gap-3 mb-4">
-                <Select value={selectedJobId} onValueChange={setSelectedJobId}>
-                  <SelectTrigger className="flex-1 rounded-lg h-9 text-[13px]">
-                    <SelectValue placeholder="Select a job to compare..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {activeJobs.map((job) => (
-                      <SelectItem key={job.id} value={job.id}>
-                        {job.title} - {job.department}
-                      </SelectItem>
-                    ))}
-                    {activeJobs.length === 0 && (
-                      <SelectItem value="none" disabled>
-                        No active jobs
-                      </SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-                <Button
-                  size="sm"
-                  onClick={handleMatch}
-                  disabled={!selectedJobId || isMatching || !hasAnalysisData}
-                  className="rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[13px] h-9 px-4 cursor-pointer font-medium gap-1.5 disabled:opacity-50"
-                >
-                  {isMatching ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  ) : (
-                    <Sparkles className="w-3.5 h-3.5" />
-                  )}
-                  Analyze Match
-                </Button>
-              </div>
-
-              {matchResult && (
-                <div className="space-y-4 pt-3 border-t border-neutral-100 dark:border-neutral-800">
-                  <div className="flex items-center gap-4">
-                    <div
-                      className={`text-3xl font-black ${getMatchColor(matchResult.matchPercentage)}`}
-                    >
-                      {matchResult.matchPercentage}%
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {getRecIcon(matchResult.recommendation)}
-                      <span className="text-[13px] font-semibold text-neutral-700 dark:text-neutral-300">
-                        {matchResult.recommendation}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="text-[12px] font-semibold text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" /> Strengths
-                      </h3>
-                      <ul className="space-y-1">
-                        {matchResult.strengths.map((s, i) => (
-                          <li
-                            key={i}
-                            className="text-[12px] text-neutral-600 dark:text-neutral-400 flex items-start gap-1.5"
-                          >
-                            <span className="text-emerald-400 mt-1">-</span> {s}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <h3 className="text-[12px] font-semibold text-red-600 dark:text-red-400 mb-2 flex items-center gap-1">
-                        <XCircle className="w-3 h-3" /> Gaps
-                      </h3>
-                      <ul className="space-y-1">
-                        {matchResult.gaps.map((g, i) => (
-                          <li
-                            key={i}
-                            className="text-[12px] text-neutral-600 dark:text-neutral-400 flex items-start gap-1.5"
-                          >
-                            <span className="text-red-400 mt-1">-</span> {g}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
 
           <div className="space-y-5">
@@ -713,6 +675,117 @@ export function CandidateProfilePage() {
                   </span>
                 </div>
               </div>
+
+              {matchResult && (
+                <div className="mt-5 pt-4 border-t border-neutral-100 dark:border-neutral-800 space-y-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-[12px] font-semibold text-neutral-700 dark:text-neutral-300">
+                      Vacancy Match
+                    </p>
+                    <span
+                      className={`text-2xl font-black ${getMatchColor(matchResult.matchPercentage)}`}
+                    >
+                      {matchResult.matchPercentage}%
+                    </span>
+                  </div>
+                  {matchedJobTitle && (
+                    <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
+                      for {matchedJobTitle}
+                    </p>
+                  )}
+                  <div className="flex items-center gap-2">
+                    {getRecIcon(matchResult.recommendation)}
+                    <span className="text-[12px] font-semibold text-neutral-700 dark:text-neutral-300">
+                      {matchResult.recommendation}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-900/20 p-2.5">
+                      <p className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 mb-1">
+                        Strengths
+                      </p>
+                      <ul className="space-y-1">
+                        {matchResult.strengths.slice(0, 2).map((s, i) => (
+                          <li
+                            key={i}
+                            className="text-[11px] leading-snug text-emerald-700/90 dark:text-emerald-300/90"
+                          >
+                            - {s}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50/60 dark:bg-red-900/20 p-2.5">
+                      <p className="text-[11px] font-semibold text-red-700 dark:text-red-300 mb-1">
+                        Gaps
+                      </p>
+                      <ul className="space-y-1">
+                        {matchResult.gaps.slice(0, 2).map((g, i) => (
+                          <li
+                            key={i}
+                            className="text-[11px] leading-snug text-red-700/90 dark:text-red-300/90"
+                          >
+                            - {g}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 p-5">
+              <h2 className="text-[14px] font-bold text-neutral-800 dark:text-neutral-200 mb-4 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-indigo-500" />
+                Match with Vacancy
+              </h2>
+
+              {!hasAnalysisData && (
+                <p className="mb-3 text-[12px] text-neutral-500 dark:text-neutral-400">
+                  This candidate has no saved AI analysis yet. Upload and analyze CV to enable matching.
+                </p>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-3">
+                <Select
+                  value={selectedJobId}
+                  onValueChange={(value) => {
+                    setSelectedJobId(value);
+                    setMatchedJobTitle(null);
+                    setMatchResult(null);
+                  }}
+                >
+                  <SelectTrigger className="flex-1 rounded-lg h-9 text-[13px]">
+                    <SelectValue placeholder="Select a job to compare..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {activeJobs.map((job) => (
+                      <SelectItem key={job.id} value={job.id}>
+                        {job.title} - {job.department}
+                      </SelectItem>
+                    ))}
+                    {activeJobs.length === 0 && (
+                      <SelectItem value="none" disabled>
+                        No active jobs
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+                <Button
+                  size="sm"
+                  onClick={handleMatch}
+                  disabled={!selectedJobId || isMatching || !hasAnalysisData}
+                  className="w-full sm:w-auto rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[13px] h-9 px-4 cursor-pointer font-medium gap-1.5 disabled:opacity-50 whitespace-nowrap"
+                >
+                  {isMatching ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-3.5 h-3.5" />
+                  )}
+                  Analyze Match
+                </Button>
+              </div>
             </div>
 
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 p-5">
@@ -741,6 +814,31 @@ export function CandidateProfilePage() {
           </div>
         </div>
       </div>
+
+      {saveError && (
+        <div className="fixed top-20 right-6 z-50 w-[min(460px,calc(100vw-2rem))] rounded-xl border border-red-300/70 dark:border-red-700 bg-red-50 dark:bg-red-950/95 shadow-xl p-3">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] font-semibold text-red-700 dark:text-red-300">
+                Candidate was not created
+              </p>
+              <p className="text-[12px] text-red-700/90 dark:text-red-300/90 break-words">
+                {saveError}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSaveError('')}
+              className="p-1 rounded-md hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
+              aria-label="Close error"
+            >
+              <X className="w-3.5 h-3.5 text-red-700 dark:text-red-300" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+

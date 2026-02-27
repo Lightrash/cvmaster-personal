@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const { startTrashCleanupScheduler } = require('./services/trashCleanupService');
 
 const authRoutes = require('./routes/authRoutes');
 const candidateRoutes = require('./routes/candidateRoutes');
@@ -38,12 +39,17 @@ app.get('/', (req, res) => {
 const PORT = Number(process.env.PORT) || 5000;
 
 const start = async () => {
+  let cleanupTimer = null;
   try {
     await connectDB();
+    cleanupTimer = startTrashCleanupScheduler();
     app.listen(PORT, () => {
       console.log(`[server] listening on port ${PORT}`);
     });
   } catch (error) {
+    if (cleanupTimer) {
+      clearInterval(cleanupTimer);
+    }
     console.error(`[server] startup failed: ${error.message}`);
     process.exit(1);
   }

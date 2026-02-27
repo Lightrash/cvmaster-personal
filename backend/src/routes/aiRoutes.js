@@ -96,9 +96,14 @@ router.post("/analyze-resume", upload.single("resume"), async (req, res) => {
     const analysis = await analyzeResumeText(trimmedText);
     return res.json(analysis);
   } catch (error) {
+    const statusCode = error.statusCode || 500;
     return res
-      .status(500)
-      .json({ message: error.message || "Failed to analyze resume" });
+      .status(statusCode)
+      .json({
+        message: error.message || "Failed to analyze resume",
+        code: error.code || undefined,
+        retryAfterSeconds: error.retryAfterSeconds || undefined,
+      });
   }
 });
 
@@ -120,9 +125,14 @@ router.post("/match", async (req, res) => {
     return res.json(matchResult);
   } catch (error) {
     console.error("Match error:", error);
+    const statusCode = error.statusCode || 500;
     return res
-      .status(500)
-      .json({ message: error.message || "Failed to match candidate" });
+      .status(statusCode)
+      .json({
+        message: error.message || "Failed to match candidate",
+        code: error.code || undefined,
+        retryAfterSeconds: error.retryAfterSeconds || undefined,
+      });
   }
 });
 

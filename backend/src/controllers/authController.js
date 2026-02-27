@@ -4,17 +4,18 @@ const { getJwtSecret } = require('../config/jwt');
 
 exports.register = async (req, res) => {
   try {
-    const { name, login, password } = req.body;
-    if (!name || !login || !password) {
-      return res.status(400).json({ message: 'name, login and password are required' });
+    const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'name, email and password are required' });
     }
 
-    const existingUser = await User.findOne({ login });
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const user = await User.create({ name, login, password });
+    const user = await User.create({ name, email: normalizedEmail, password });
     const token = jwt.sign({ id: user._id }, getJwtSecret(), { expiresIn: '30d' });
     return res.status(201).json({ _id: user._id, name: user.name, token });
   } catch (error) {
@@ -24,8 +25,16 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { login, password } = req.body;
-    const user = await User.findOne({ login });
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: 'email and password are required' });
+    }
+
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const user =
+      (await User.findOne({ email: normalizedEmail })) ||
+      (await User.findOne({ login: normalizedEmail }));
+
     if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }

@@ -17,6 +17,45 @@ function shouldUseMock() {
   return false;
 }
 
+function shouldFallbackOnQuota() {
+  return process.env.AI_FALLBACK_ON_QUOTA !== 'false';
+}
+
+function parseRetrySeconds(errorText = '') {
+  const direct = errorText.match(/retry in\s+([\d.]+)s/i);
+  if (direct) return Math.ceil(Number(direct[1]));
+
+  const rpc = errorText.match(/"retryDelay":"(\d+)s"/i);
+  if (rpc) return Number(rpc[1]);
+
+  return null;
+}
+
+function isQuotaError(error) {
+  const text = String(error?.message || error || '').toLowerCase();
+  return (
+    text.includes('429') &&
+    (text.includes('quota') ||
+      text.includes('rate limit') ||
+      text.includes('too many requests') ||
+      text.includes('generate_content_free_tier_requests'))
+  );
+}
+
+function buildQuotaError(error, action) {
+  const retrySeconds = parseRetrySeconds(String(error?.message || error || ''));
+  const suffix = retrySeconds
+    ? ` Retry after about ${retrySeconds} seconds.`
+    : ' Retry later or enable AI_MOCK=true for local development.';
+  const friendly = `AI quota exceeded while trying to ${action}.${suffix}`;
+  const wrapped = new Error(friendly);
+  wrapped.statusCode = 429;
+  wrapped.code = 'AI_QUOTA_EXCEEDED';
+  wrapped.retryAfterSeconds = retrySeconds || undefined;
+  wrapped.originalMessage = String(error?.message || error || '');
+  return wrapped;
+}
+
 function unique(values) {
   return [...new Set(values)];
 }
@@ -225,7 +264,19 @@ Rules:
 Resume text:
 ${resumeText}`;
 
-  return callModelAndParse(prompt);
+  try {
+    return await callModelAndParse(prompt);
+  } catch (error) {
+    if (isQuotaError(error) && shouldFallbackOnQuota()) {
+      const fallback = buildMockAnalysis(resumeText);
+      fallback.summary = `${fallback.summary} (Fallback mode: AI quota exceeded)`;
+      return fallback;
+    }
+    if (isQuotaError(error)) {
+      throw buildQuotaError(error, 'analyze resume');
+    }
+    throw error;
+  }
 }
 
 async function matchResumeToJob(analysis, job) {
@@ -257,7 +308,22 @@ Description: ${job.description || 'N/A'}
 Requirements: ${(job.requirements || []).join(', ') || 'N/A'}
 Tech Stack: ${(job.stack || []).join(', ') || 'N/A'}`;
 
-  return callModelAndParse(prompt);
+  try {
+    return await callModelAndParse(prompt);
+  } catch (error) {
+    if (isQuotaError(error) && shouldFallbackOnQuota()) {
+      const fallback = buildMockMatch(analysis, job);
+      fallback.strengths = [
+        ...(fallback.strengths || []),
+        'Fallback mode: AI quota exceeded',
+      ].slice(0, 5);
+      return fallback;
+    }
+    if (isQuotaError(error)) {
+      throw buildQuotaError(error, 'match candidate with vacancy');
+    }
+    throw error;
+  }
 }
 
 module.exports = { analyzeResumeText, matchResumeToJob };

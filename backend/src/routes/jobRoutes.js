@@ -4,6 +4,20 @@ const Vacancy = require('../models/Vacancy');
 const Candidate = require('../models/Candidate');
 
 const router = express.Router();
+const STATUS_VALUES = ['Active', 'Closed', 'Draft'];
+
+function mapDbStatusToApi(status) {
+  const value = String(status || '').trim();
+  if (value === 'Р’С–РґРєСЂРёС‚Р°' || value.toLowerCase() === 'active') return 'Active';
+  if (value === 'Р—Р°РєСЂРёС‚Р°' || value.toLowerCase() === 'closed') return 'Closed';
+  if (value === 'Р’ РѕС‡С–РєСѓРІР°РЅРЅС–' || value.toLowerCase() === 'draft') return 'Draft';
+  return 'Draft';
+}
+
+function mapApiStatusToDb(status) {
+  const value = String(status || '').trim();
+  return STATUS_VALUES.includes(value) ? value : 'Active';
+}
 
 function toJob(v) {
   return {
@@ -11,7 +25,7 @@ function toJob(v) {
     title: v.title,
     department: v.department || 'General',
     candidatesCount: v.candidatesCount || 0,
-    status: v.status || 'Active',
+    status: mapDbStatusToApi(v.status),
     postedDate: v.createdAt.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -29,11 +43,27 @@ function normalizeKey(value) {
 
 router.get('/', async (req, res) => {
   try {
-    const [vacancies, counts] = await Promise.all([
+    const [vacancies, countsByVacancyId, countsByPosition] = await Promise.all([
       Vacancy.find().sort({ createdAt: -1 }),
       Candidate.aggregate([
         {
           $match: {
+            status: { $ne: 'Rejected' },
+            vacancyId: { $ne: null },
+          },
+        },
+        {
+          $group: {
+            _id: { $toString: '$vacancyId' },
+            count: { $sum: 1 },
+          },
+        },
+      ]),
+      Candidate.aggregate([
+        {
+          $match: {
+            status: { $ne: 'Rejected' },
+            vacancyId: null,
             position: { $type: 'string', $ne: '' },
           },
         },
@@ -46,11 +76,13 @@ router.get('/', async (req, res) => {
       ]),
     ]);
 
-    const countsByTitle = new Map(counts.map((item) => [item._id, item.count]));
+    const countsByVacancyMap = new Map(countsByVacancyId.map((item) => [item._id, item.count]));
+    const countsByTitle = new Map(countsByPosition.map((item) => [item._id, item.count]));
     return res.json(
       vacancies.map((vacancy) => ({
         ...toJob(vacancy),
         candidatesCount:
+          countsByVacancyMap.get(vacancy._id.toString()) ??
           countsByTitle.get(normalizeKey(vacancy.title)) ??
           vacancy.candidatesCount ??
           0,
@@ -75,11 +107,63 @@ router.post('/', async (req, res) => {
       department: String(department || 'General').trim(),
       requirements: Array.isArray(requirements) ? requirements : [],
       stack: Array.isArray(stack) ? stack : [],
-      status: ['Active', 'Closed', 'Draft'].includes(status) ? status : 'Active',
+      status: mapApiStatusToDb(status),
       candidatesCount: 0,
     });
 
     return res.status(201).json(toJob(vacancy));
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+router.patch('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid job ID' });
+    }
+
+    const payload = {};
+
+    if (req.body.title !== undefined) {
+      const title = String(req.body.title || '').trim();
+      if (!title) {
+        return res.status(400).json({ message: 'Title cannot be empty' });
+      }
+      payload.title = title;
+    }
+
+    if (req.body.department !== undefined) {
+      payload.department = String(req.body.department || 'General').trim() || 'General';
+    }
+
+    if (req.body.description !== undefined) {
+      payload.description = String(req.body.description || '').trim();
+    }
+
+    if (req.body.requirements !== undefined) {
+      payload.requirements = Array.isArray(req.body.requirements) ? req.body.requirements : [];
+    }
+
+    if (req.body.stack !== undefined) {
+      payload.stack = Array.isArray(req.body.stack) ? req.body.stack : [];
+    }
+
+    if (req.body.status !== undefined) {
+      payload.status = mapApiStatusToDb(req.body.status);
+    }
+
+    const updated = await Vacancy.findByIdAndUpdate(id, payload, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updated) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+
+    return res.json(toJob(updated));
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

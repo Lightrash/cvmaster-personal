@@ -1,4 +1,4 @@
-import type { ResumeAnalysis, MatchResult, Job, Candidate, ColumnStatus } from '@/types';
+import type { ResumeAnalysis, MatchResult, Job, Candidate, ColumnStatus, AuthUser } from '@/types';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
@@ -12,6 +12,57 @@ function getNetworkErrorMessage(error: unknown): string {
 async function parseError(res: Response, fallback: string): Promise<Error> {
     const err = await res.json().catch(() => ({ message: fallback }));
     return new Error(err.message || fallback);
+}
+
+function normalizeAuthUser(payload: unknown): AuthUser {
+    const data = (payload && typeof payload === 'object' ? payload : {}) as Record<string, unknown>;
+    const id = String(data.id || data._id || '');
+    const name = String(data.name || '');
+    const token = String(data.token || '');
+
+    if (!id || !token) {
+        throw new Error('Invalid auth response');
+    }
+
+    return { id, name, token };
+}
+
+export async function loginUser(email: string, password: string): Promise<AuthUser> {
+    let res: Response;
+    try {
+        res = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        });
+    } catch (error) {
+        throw new Error(getNetworkErrorMessage(error));
+    }
+
+    if (!res.ok) {
+        throw await parseError(res, 'Failed to login');
+    }
+
+    return normalizeAuthUser(await res.json());
+}
+
+export async function registerUser(name: string, email: string, password: string): Promise<AuthUser> {
+    let res: Response;
+    try {
+        res = await fetch(`${API_URL}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password }),
+        });
+    } catch (error) {
+        throw new Error(getNetworkErrorMessage(error));
+    }
+
+    if (!res.ok) {
+        throw await parseError(res, 'Failed to register');
+    }
+
+    return normalizeAuthUser(await res.json());
 }
 
 export async function analyzeResume(file: File): Promise<ResumeAnalysis> {
@@ -65,7 +116,7 @@ export async function fetchJobs(): Promise<Job[]> {
     } catch (error) {
         throw new Error(getNetworkErrorMessage(error));
     }
-    if (!res.ok) throw new Error('Failed to fetch jobs');
+    if (!res.ok) throw await parseError(res, 'Failed to fetch jobs');
     return res.json();
 }
 
@@ -80,7 +131,25 @@ export async function createJob(job: Omit<Job, 'id'>): Promise<Job> {
     } catch (error) {
         throw new Error(getNetworkErrorMessage(error));
     }
-    if (!res.ok) throw new Error('Failed to create job');
+    if (!res.ok) throw await parseError(res, 'Failed to create job');
+    return res.json();
+}
+
+export async function updateJob(
+    id: string,
+    patch: Partial<Omit<Job, 'id'>>
+): Promise<Job> {
+    let res: Response;
+    try {
+        res = await fetch(`${API_URL}/jobs/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(patch),
+        });
+    } catch (error) {
+        throw new Error(getNetworkErrorMessage(error));
+    }
+    if (!res.ok) throw await parseError(res, 'Failed to update job');
     return res.json();
 }
 
@@ -91,18 +160,33 @@ export async function deleteJob(id: string): Promise<void> {
     } catch (error) {
         throw new Error(getNetworkErrorMessage(error));
     }
-    if (!res.ok) throw new Error('Failed to delete job');
+    if (!res.ok) throw await parseError(res, 'Failed to delete job');
 }
 
 // Candidates CRUD
-export async function fetchCandidates(): Promise<Candidate[]> {
+export async function fetchCandidates(params?: { includeRejected?: boolean; vacancyId?: string }): Promise<Candidate[]> {
     let res: Response;
+    const search = new URLSearchParams();
+    if (params?.includeRejected) search.set('includeRejected', 'true');
+    if (params?.vacancyId) search.set('vacancyId', params.vacancyId);
+    const query = search.toString();
     try {
-        res = await fetch(`${API_URL}/candidates`);
+        res = await fetch(`${API_URL}/candidates${query ? `?${query}` : ''}`);
     } catch (error) {
         throw new Error(getNetworkErrorMessage(error));
     }
-    if (!res.ok) throw new Error('Failed to fetch candidates');
+    if (!res.ok) throw await parseError(res, 'Failed to fetch candidates');
+    return res.json();
+}
+
+export async function fetchTrashCandidates(): Promise<{ retentionDays: number; items: Candidate[] }> {
+    let res: Response;
+    try {
+        res = await fetch(`${API_URL}/candidates/trash`);
+    } catch (error) {
+        throw new Error(getNetworkErrorMessage(error));
+    }
+    if (!res.ok) throw await parseError(res, 'Failed to fetch trash candidates');
     return res.json();
 }
 
@@ -151,13 +235,21 @@ export async function updateCandidate(
     return res.json();
 }
 
-export async function updateCandidateStatus(id: string, status: ColumnStatus): Promise<Candidate> {
+export async function updateCandidateStatus(
+    id: string,
+    status: ColumnStatus,
+    options?: { rejectionReason?: string; comment?: string }
+): Promise<Candidate> {
     let res: Response;
     try {
         res = await fetch(`${API_URL}/candidates/${id}/status`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status }),
+            body: JSON.stringify({
+                status,
+                rejectionReason: options?.rejectionReason,
+                comment: options?.comment,
+            }),
         });
     } catch (error) {
         throw new Error(getNetworkErrorMessage(error));
@@ -165,3 +257,22 @@ export async function updateCandidateStatus(id: string, status: ColumnStatus): P
     if (!res.ok) throw await parseError(res, 'Failed to update candidate status');
     return res.json();
 }
+
+export async function restoreCandidateFromTrash(
+    id: string,
+    status: Exclude<ColumnStatus, 'Rejected'> = 'New'
+): Promise<Candidate> {
+    let res: Response;
+    try {
+        res = await fetch(`${API_URL}/candidates/${id}/restore`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status }),
+        });
+    } catch (error) {
+        throw new Error(getNetworkErrorMessage(error));
+    }
+    if (!res.ok) throw await parseError(res, 'Failed to restore candidate');
+    return res.json();
+}
+
