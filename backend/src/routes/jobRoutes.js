@@ -34,6 +34,9 @@ function toJob(v) {
     description: v.description || '',
     requirements: v.requirements || [],
     stack: v.stack || [],
+    criticalSkills: v.criticalSkills || [],
+    coreSkills: v.coreSkills || [],
+    optionalSkills: v.optionalSkills || [],
   };
 }
 
@@ -95,7 +98,17 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const { title, department, description, requirements, stack, status } = req.body;
+    const {
+      title,
+      department,
+      description,
+      requirements,
+      stack,
+      criticalSkills,
+      coreSkills,
+      optionalSkills,
+      status,
+    } = req.body;
 
     if (!title || !String(title).trim()) {
       return res.status(400).json({ message: 'Title is required' });
@@ -107,6 +120,9 @@ router.post('/', async (req, res) => {
       department: String(department || 'General').trim(),
       requirements: Array.isArray(requirements) ? requirements : [],
       stack: Array.isArray(stack) ? stack : [],
+      criticalSkills: Array.isArray(criticalSkills) ? criticalSkills : [],
+      coreSkills: Array.isArray(coreSkills) ? coreSkills : [],
+      optionalSkills: Array.isArray(optionalSkills) ? optionalSkills : [],
       status: mapApiStatusToDb(status),
       candidatesCount: 0,
     });
@@ -148,6 +164,18 @@ router.patch('/:id', async (req, res) => {
 
     if (req.body.stack !== undefined) {
       payload.stack = Array.isArray(req.body.stack) ? req.body.stack : [];
+    }
+
+    if (req.body.criticalSkills !== undefined) {
+      payload.criticalSkills = Array.isArray(req.body.criticalSkills) ? req.body.criticalSkills : [];
+    }
+
+    if (req.body.coreSkills !== undefined) {
+      payload.coreSkills = Array.isArray(req.body.coreSkills) ? req.body.coreSkills : [];
+    }
+
+    if (req.body.optionalSkills !== undefined) {
+      payload.optionalSkills = Array.isArray(req.body.optionalSkills) ? req.body.optionalSkills : [];
     }
 
     if (req.body.status !== undefined) {

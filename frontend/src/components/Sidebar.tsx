@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutGrid, Briefcase, Users, Settings, LogOut } from 'lucide-react';
+import { Briefcase, Users, Settings, LogOut } from 'lucide-react';
 import { useLayoutStore } from '@/store/useLayoutStore';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -9,7 +9,6 @@ export function Sidebar() {
   const logout = useAuthStore((state) => state.logout);
 
   const menuItems = [
-    { id: 'home', label: 'Home', icon: LayoutGrid, path: '/' },
     { id: 'candidates', label: 'Candidates', icon: Users, path: '/candidates' },
     { id: 'jobs', label: 'Jobs', icon: Briefcase, path: '/jobs' },
   ];

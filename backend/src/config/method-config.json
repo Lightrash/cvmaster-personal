@@ -1,0 +1,116 @@
+{
+  "__description_uk": "Конфіг самостійного методу скорингу. Редагуй тільки ці параметри, без змін у коді.",
+  "version": "deterministic-v3",
+  "__comment_profileWeights": "Ваги для розрахунку overallScore (сума буде автоматично нормалізована до 1).",
+  "profileWeights": {
+    "years": 0.4,
+    "hardSkills": 0.32,
+    "softSkills": 0.1,
+    "languages": 0.1,
+    "education": 0.08
+  },
+  "__comment_matchWeights": "Ваги для vacancy match між кандидатом і вакансією. Порожні buckets виключаються з нормалізації під час розрахунку.",
+  "matchWeights": {
+    "criticalCoverage": 0.42,
+    "coreCoverage": 0.24,
+    "optionalCoverage": 0.06,
+    "experienceFit": 0.18,
+    "levelFit": 0.1
+  },
+  "__comment_matchPenalties": "Penalty за missing critical skills і hard-stop для рекомендації Proceed.",
+  "matchPenalties": {
+    "criticalMissingPenaltyPerSkill": 0.12,
+    "maxCriticalPenalty": 0.36,
+    "criticalMissingProceedBlockThreshold": 1
+  },
+  "__comment_matchSkillTiers": "Tiered matching між requirement skill і candidate skill.",
+  "matchSkillTiers": {
+    "exact": 1,
+    "synonym": 0.85,
+    "related": 0.5,
+    "none": 0
+  },
+  "__comment_recommendationThresholds": "Пороги рекомендацій у відсотках.",
+  "recommendationThresholds": {
+    "proceedMin": 70,
+    "reviewMin": 40
+  },
+  "__comment_hardSkillsScoring": "Hard skills: насичення, core/supporting skills і bonus за evidence з різних джерел профілю.",
+  "hardSkillsScoring": {
+    "coreSkillLimit": 5,
+    "coreDecay": 0.8,
+    "supportingWeight": 0.25,
+    "supportingDecay": 0.65,
+    "scorePerUnit": 1.25,
+    "maxScore": 10,
+    "evidenceBonusCapPerSkill": 1.5,
+    "sourceBonuses": {
+      "technologies": 0.25,
+      "position": 0.8,
+      "summary": 0.35,
+      "experience": 0.55
+    },
+    "priorityBonuses": {
+      "topSkill": 0.18,
+      "topTechnology": 0.1,
+      "topWindow": 3
+    }
+  },
+  "__comment_softSkillsScoring": "Soft skills: diminishing returns + cap, який залежить від сили hard profile, щоб soft skills не перекривали слабкі hard skills.",
+  "softSkillsScoring": {
+    "scorePerUnit": 1.1,
+    "decay": 0.55,
+    "maxScore": 4,
+    "hardProfileUnlockMinRatio": 0.35,
+    "hardProfileFullUnlockScore": 7
+  },
+  "__comment_experienceScoring": "General vs relevant experience: heuristic relevant years, dampening years in profile score, and relevant-first experience fit in vacancy match.",
+  "experienceScoring": {
+    "profileYearsBlend": {
+      "generalYearsShare": 0.55,
+      "relevantYearsShare": 0.45,
+      "dampeningStartScore": 7,
+      "dampeningStrength": 0.45,
+      "minimumWeightMultiplier": 0.55
+    },
+    "relevantExperienceHeuristic": {
+      "minimumRelevantRatio": 0.25,
+      "roleRecencyDecay": 0.72,
+      "titleOverlapWeight": 0.45,
+      "skillOverlapWeight": 0.35,
+      "currentRoleBonus": 0.2
+    },
+    "matchExperience": {
+      "relevantYearsWeight": 0.75,
+      "generalYearsFallbackWeight": 0.25,
+      "noRequirementDefaultYears": 2
+    }
+  },
+  "__comment_languageScoresByCount": "Бали за кількість мов у профілі кандидата.",
+  "languageScoresByCount": {
+    "0": 2,
+    "1": 5,
+    "2": 7,
+    "3": 9,
+    "4plus": 10
+  },
+  "__comment_educationScores": "Бали за тип освіти (визначається за ключовими словами в тексті освіти).",
+  "educationScores": {
+    "empty": 3,
+    "other": 4,
+    "bachelor": 6,
+    "master": 8,
+    "phd": 9
+  },
+  "__comment_yearsScoreBands": "Таблиця перетворення yearsOfExperience у шкалу 1..10.",
+  "yearsScoreBands": [
+    { "maxYears": 0, "score": 1 },
+    { "maxYears": 1, "score": 3 },
+    { "maxYears": 2, "score": 5 },
+    { "maxYears": 3, "score": 6 },
+    { "maxYears": 4, "score": 7 },
+    { "maxYears": 6, "score": 8 },
+    { "maxYears": 8, "score": 9 },
+    { "maxYears": 50, "score": 10 }
+  ]
+}

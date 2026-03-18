@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
 import { Board } from './components/Board';
-import { DashboardPage } from './pages/DashboardPage';
 import { JobsPage } from './pages/JobsPage';
 import { CandidateProfilePage } from './pages/CandidateProfilePage';
 import { SettingsPage } from './pages/SettingsPage';
@@ -28,7 +27,7 @@ function ProtectedLayout() {
 
 function RootRedirect() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  return <Navigate replace to={isAuthenticated ? '/' : '/login'} />;
+  return <Navigate replace to={isAuthenticated ? '/candidates' : '/login'} />;
 }
 
 function App() {
@@ -39,7 +38,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
 
         <Route element={<ProtectedLayout />}>
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/" element={<Navigate replace to="/candidates" />} />
           <Route path="/candidates" element={<Board />} />
           <Route path="/board" element={<Navigate replace to="/candidates" />} />
           <Route path="/jobs" element={<JobsPage />} />

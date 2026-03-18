@@ -43,6 +43,8 @@ const EMPTY_ANALYSIS: ResumeAnalysis = {
   skills: [],
   level: 'Junior',
   yearsOfExperience: 0,
+  generalYearsExperience: 0,
+  relevantYearsExperience: null,
   technologies: [],
   softSkills: [],
   overallScore: 0,
@@ -65,6 +67,14 @@ function normalizeAnalysis(value: unknown): ResumeAnalysis {
     yearsOfExperience: Number.isFinite(Number(src.yearsOfExperience))
       ? Number(src.yearsOfExperience)
       : 0,
+    generalYearsExperience: Number.isFinite(Number(src.generalYearsExperience))
+      ? Number(src.generalYearsExperience)
+      : Number.isFinite(Number(src.yearsOfExperience))
+        ? Number(src.yearsOfExperience)
+        : 0,
+    relevantYearsExperience: Number.isFinite(Number(src.relevantYearsExperience))
+      ? Number(src.relevantYearsExperience)
+      : null,
     technologies: Array.isArray(src.technologies) ? src.technologies.map(String) : [],
     softSkills: Array.isArray(src.softSkills) ? src.softSkills.map(String) : [],
     overallScore: Number.isFinite(Number(src.overallScore))

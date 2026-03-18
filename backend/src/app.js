@@ -19,6 +19,7 @@ require('./models/Position');
 require('./models/Vacancy');
 require('./models/CandidateStatus');
 require('./models/Application');
+require('./models/MatchEvaluation');
 
 // Middleware
 app.use(cors());
@@ -31,6 +32,7 @@ app.use('/api/vacancies', require('./routes/vacancyRoutes'));
 app.use('/api/applications', require('./routes/applicationRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));
+app.use('/api/match-evaluations', require('./routes/matchEvaluationRoutes'));
 
 app.get('/', (req, res) => {
   res.send('HR CRM API is running');

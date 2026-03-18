@@ -12,6 +12,9 @@ const vacancySchema = new mongoose.Schema({
   salary: { type: String, default: '' },
   requirements: [{ type: String }],
   stack: [{ type: String }],
+  criticalSkills: [{ type: String }],
+  coreSkills: [{ type: String }],
+  optionalSkills: [{ type: String }],
   candidatesCount: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
 });

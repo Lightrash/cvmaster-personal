@@ -55,6 +55,9 @@ export interface Job {
     description?: string;
     requirements?: string[];
     stack?: string[];
+    criticalSkills?: string[];
+    coreSkills?: string[];
+    optionalSkills?: string[];
 }
 
 // --- AI Resume Analysis (розширений з parsed даними) ---
@@ -68,6 +71,8 @@ export interface ResumeAnalysis {
     skills: string[];
     level: 'Junior' | 'Middle' | 'Senior';
     yearsOfExperience: number;
+    generalYearsExperience?: number;
+    relevantYearsExperience?: number | null;
     technologies: string[];
     softSkills: string[];
     overallScore: number; // 1-10
@@ -82,6 +87,19 @@ export interface MatchResult {
     strengths: string[];
     gaps: string[];
     recommendation: 'Proceed' | 'Review manually' | 'Reject';
+    matchedCriticalSkills?: string[];
+    missingCriticalSkills?: string[];
+    matchedCoreSkills?: string[];
+    missingCoreSkills?: string[];
+    matchedOptionalSkills?: string[];
+    optionalCoverage?: number;
+    skillMatchBreakdown?: Array<{
+        category: 'critical' | 'core' | 'optional';
+        requiredSkill: string;
+        matchedSkill: string | null;
+        tier: 'exact' | 'synonym' | 'related' | 'none';
+        score: number;
+    }>;
 }
 
 export interface AuthUser {

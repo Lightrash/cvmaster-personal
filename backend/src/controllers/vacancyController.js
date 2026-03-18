@@ -25,6 +25,9 @@ function toApiVacancy(vacancy) {
     salary: vacancy.salary || '',
     requirements: vacancy.requirements || [],
     stack: vacancy.stack || [],
+    criticalSkills: vacancy.criticalSkills || [],
+    coreSkills: vacancy.coreSkills || [],
+    optionalSkills: vacancy.optionalSkills || [],
     candidatesCount: vacancy.candidatesCount || 0,
     postedDate: vacancy.createdAt.toLocaleDateString('en-US', {
       month: 'short',
@@ -36,7 +39,18 @@ function toApiVacancy(vacancy) {
 
 exports.createVacancy = async (req, res) => {
   try {
-    const { title, description, department, status, salary, requirements, stack } = req.body;
+    const {
+      title,
+      description,
+      department,
+      status,
+      salary,
+      requirements,
+      stack,
+      criticalSkills,
+      coreSkills,
+      optionalSkills,
+    } = req.body;
 
     if (!title || !String(title).trim()) {
       return res.status(400).json({ message: 'Title is required' });
@@ -50,6 +64,9 @@ exports.createVacancy = async (req, res) => {
       salary: String(salary || '').trim(),
       requirements: Array.isArray(requirements) ? requirements : [],
       stack: Array.isArray(stack) ? stack : [],
+      criticalSkills: Array.isArray(criticalSkills) ? criticalSkills : [],
+      coreSkills: Array.isArray(coreSkills) ? coreSkills : [],
+      optionalSkills: Array.isArray(optionalSkills) ? optionalSkills : [],
       candidatesCount: 0,
     });
 
@@ -101,6 +118,9 @@ exports.updateVacancy = async (req, res) => {
     if (payload.salary !== undefined) payload.salary = String(payload.salary).trim();
     if (payload.requirements !== undefined && !Array.isArray(payload.requirements)) payload.requirements = [];
     if (payload.stack !== undefined && !Array.isArray(payload.stack)) payload.stack = [];
+    if (payload.criticalSkills !== undefined && !Array.isArray(payload.criticalSkills)) payload.criticalSkills = [];
+    if (payload.coreSkills !== undefined && !Array.isArray(payload.coreSkills)) payload.coreSkills = [];
+    if (payload.optionalSkills !== undefined && !Array.isArray(payload.optionalSkills)) payload.optionalSkills = [];
 
     const vacancy = await Vacancy.findByIdAndUpdate(id, payload, {
       new: true,

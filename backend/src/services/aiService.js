@@ -1,5 +1,10 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const {
+  applyDeterministicProfileScoring,
+  computeDeterministicMatch,
+} = require('./deterministicScoringService');
 
+// Набори ключових слів для локальних евристик (mock/fallback).
 const TECH_KEYWORDS = [
   'javascript', 'typescript', 'node.js', 'node', 'react', 'vue', 'angular',
   'next.js', 'express', 'nestjs', 'python', 'java', 'c#', 'php', 'go', 'rust',
@@ -19,6 +24,11 @@ function shouldUseMock() {
 
 function shouldFallbackOnQuota() {
   return process.env.AI_FALLBACK_ON_QUOTA !== 'false';
+}
+
+function shouldUseDeterministicMatch() {
+  // За замовчуванням метод match детермінований і відтворюваний.
+  return process.env.MATCH_METHOD_MODE !== 'llm';
 }
 
 function parseRetrySeconds(errorText = '') {
@@ -147,7 +157,8 @@ function buildMockAnalysis(resumeText) {
   const softSkills = findKeywords(resumeText, SOFT_SKILLS_KEYWORDS);
   const level = inferLevel(years);
 
-  return {
+  // Навіть у mock-режимі фінальний бал рахуємо через єдину детерміновану формулу.
+  return applyDeterministicProfileScoring({
     firstName,
     lastName,
     email: extractEmail(resumeText),
@@ -163,42 +174,14 @@ function buildMockAnalysis(resumeText) {
     summary: `Mock analysis for local development. Candidate looks like a ${level} ${inferPosition(resumeText)} with ${years} year(s) of experience.`,
     education: inferEducation(resumeText),
     languages: inferLanguages(resumeText),
-  };
+  });
 }
 
 function buildMockMatch(analysis, job) {
-  const candidate = unique([
-    ...(analysis.skills || []),
-    ...(analysis.technologies || []),
-  ]).map((x) => normalize(String(x)));
-
-  const required = unique([
-    ...((job.requirements || []).map((x) => String(x))),
-    ...((job.stack || []).map((x) => String(x))),
-  ]);
-
-  if (required.length === 0) {
-    return {
-      matchPercentage: 70,
-      strengths: ['Base profile generated from mock mode'],
-      gaps: [],
-      recommendation: 'Proceed',
-    };
-  }
-
-  const matched = required.filter((req) => {
-    const r = normalize(req);
-    return candidate.some((skill) => r.includes(skill) || skill.includes(r));
-  });
-  const gaps = required.filter((req) => !matched.includes(req));
-  const matchPercentage = Math.max(0, Math.min(100, Math.round((matched.length / required.length) * 100)));
-  const recommendation = matchPercentage >= 70 ? 'Proceed' : matchPercentage >= 40 ? 'Review manually' : 'Reject';
-
+  const deterministic = computeDeterministicMatch(analysis, job);
   return {
-    matchPercentage,
-    strengths: matched.slice(0, 5),
-    gaps: gaps.slice(0, 5),
-    recommendation,
+    ...deterministic,
+    strengths: unique([...(deterministic.strengths || []), 'Deterministic scoring (mock mode)']).slice(0, 5),
   };
 }
 
@@ -265,7 +248,9 @@ Resume text:
 ${resumeText}`;
 
   try {
-    return await callModelAndParse(prompt);
+    const llmResult = await callModelAndParse(prompt);
+    // LLM витягує структуру, але фінальний score/level перераховуємо локально.
+    return applyDeterministicProfileScoring(llmResult);
   } catch (error) {
     if (isQuotaError(error) && shouldFallbackOnQuota()) {
       const fallback = buildMockAnalysis(resumeText);
@@ -280,8 +265,10 @@ ${resumeText}`;
 }
 
 async function matchResumeToJob(analysis, job) {
-  if (shouldUseMock()) {
-    return buildMockMatch(analysis, job);
+  // Базовий match завжди рахуємо локальною формулою (самостійний метод).
+  const deterministicMatch = computeDeterministicMatch(analysis, job);
+  if (shouldUseMock() || shouldUseDeterministicMatch()) {
+    return shouldUseMock() ? buildMockMatch(analysis, job) : deterministicMatch;
   }
 
   const prompt = `You are an expert HR matching system. Compare the candidate's resume analysis with the job requirements and return a JSON object with exactly these fields:
@@ -309,10 +296,23 @@ Requirements: ${(job.requirements || []).join(', ') || 'N/A'}
 Tech Stack: ${(job.stack || []).join(', ') || 'N/A'}`;
 
   try {
-    return await callModelAndParse(prompt);
+    const llmMatch = await callModelAndParse(prompt);
+    // Якщо увімкнено LLM-режим, беремо від LLM лише текстові пояснення (strengths/gaps).
+    // Підсумкові matchPercentage/recommendation залишаються детермінованими.
+    return {
+      ...deterministicMatch,
+      strengths: Array.isArray(llmMatch?.strengths) && llmMatch.strengths.length
+        ? llmMatch.strengths.slice(0, 5).map((x) => String(x))
+        : deterministicMatch.strengths,
+      gaps: Array.isArray(llmMatch?.gaps) && llmMatch.gaps.length
+        ? llmMatch.gaps.slice(0, 5).map((x) => String(x))
+        : deterministicMatch.gaps,
+    };
   } catch (error) {
     if (isQuotaError(error) && shouldFallbackOnQuota()) {
-      const fallback = buildMockMatch(analysis, job);
+      const fallback = {
+        ...deterministicMatch,
+      };
       fallback.strengths = [
         ...(fallback.strengths || []),
         'Fallback mode: AI quota exceeded',
