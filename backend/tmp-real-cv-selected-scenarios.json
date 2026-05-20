@@ -1,0 +1,1765 @@
+[
+  {
+    "fileName": "jfd_01_ihor_tkachuk.pdf",
+    "candidate": "Ihor Tkachuk",
+    "position": "Junior Frontend Developer",
+    "level": "Junior",
+    "vacancyTitle": "Junior Frontend Developer",
+    "finalMatchScore": 98.09,
+    "neuralMatchScore": 92.65,
+    "ruleBasedMatchScore": 78,
+    "recommendation": "Proceed",
+    "confidence": 0.72,
+    "strengths": [
+      "Нейромережева змістова відповідність: 98.09/100",
+      "Спільні змістові акценти: junior, frontend, developer, ., skills, javascript, responsive, design",
+      "Збіг основних навичок: 6 з 10",
+      "Релевантний досвід: 1.3 р."
+    ],
+    "gaps": [
+      "Відсутня основна навичка: HTML",
+      "Відсутня основна навичка: CSS"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": 0,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": 5.44,
+      "domainMismatchAdjustment": 0,
+      "weakOverlapAdjustment": 0,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": 5.44
+    },
+    "roleContext": {
+      "jobRoleFamily": "frontend",
+      "candidateRoleFamily": "frontend",
+      "jobFamilyConfidence": 0.74,
+      "candidateFamilyConfidence": 0.63,
+      "roleContextAlignment": 1,
+      "roleContextConfidence": 0.68,
+      "alignmentBand": "strong",
+      "rawAdjustment": 0.08,
+      "effectiveAdjustment": 0.0544,
+      "adjustmentReason": "Кандидат і вакансія належать до одного рольового напряму: frontend.",
+      "jobFamilyEvidence": {
+        "evidence": {
+          "title": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.26
+          },
+          "requirements": {
+            "markerHits": [],
+            "priorityHits": [
+              "javascript",
+              "css",
+              "html"
+            ],
+            "contribution": 0.2
+          },
+          "stack": {
+            "markerHits": [
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "javascript",
+              "css",
+              "html"
+            ],
+            "contribution": 0.2
+          },
+          "explicitBuckets": {
+            "markerHits": [
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "javascript",
+              "css",
+              "html"
+            ],
+            "contribution": 0.25
+          }
+        },
+        "matchedMarkers": [
+          "frontend",
+          "javascript",
+          "css",
+          "html",
+          "react"
+        ],
+        "familyScores": [
+          {
+            "family": "frontend",
+            "score": 0.91
+          },
+          {
+            "family": "fullstack",
+            "score": 0.88
+          },
+          {
+            "family": "backend",
+            "score": 0.38
+          },
+          {
+            "family": "qa",
+            "score": 0
+          },
+          {
+            "family": "devops",
+            "score": 0
+          },
+          {
+            "family": "data",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "recruiting",
+            "score": 0
+          }
+        ]
+      },
+      "candidateFamilyEvidence": {
+        "evidence": {
+          "position": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.18
+          },
+          "summary": {
+            "markerHits": [
+              "ui"
+            ],
+            "priorityHits": [],
+            "contribution": 0.07
+          },
+          "skills": {
+            "markerHits": [
+              "ui",
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "javascript"
+            ],
+            "contribution": 0.18
+          },
+          "technologies": {
+            "markerHits": [
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "typescript"
+            ],
+            "contribution": 0.14
+          },
+          "historyTitles": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.12
+          }
+        },
+        "matchedMarkers": [
+          "frontend",
+          "ui",
+          "react",
+          "javascript",
+          "typescript"
+        ],
+        "familyScores": [
+          {
+            "family": "frontend",
+            "score": 0.69
+          },
+          {
+            "family": "fullstack",
+            "score": 0.61
+          },
+          {
+            "family": "backend",
+            "score": 0.34
+          },
+          {
+            "family": "qa",
+            "score": 0
+          },
+          {
+            "family": "devops",
+            "score": 0
+          },
+          {
+            "family": "data",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "recruiting",
+            "score": 0
+          }
+        ]
+      }
+    },
+    "providerStatus": "ready"
+  },
+  {
+    "fileName": "jfd_02_daria_koval.pdf",
+    "candidate": "Daria Koval",
+    "position": "Junior Frontend Developer",
+    "level": "Junior",
+    "vacancyTitle": "Middle Frontend Developer",
+    "finalMatchScore": 66.67,
+    "neuralMatchScore": 87.23,
+    "ruleBasedMatchScore": 41,
+    "recommendation": "Review manually",
+    "confidence": 0.73,
+    "strengths": [
+      "Нейромережева змістова відповідність: 66.67/100",
+      "Спільні змістові акценти: frontend, developer, ui, ., skills, react, axios",
+      "Збіг основних навичок: 3 з 12"
+    ],
+    "gaps": [
+      "Відсутня основна навичка: REST API",
+      "Відсутня основна навичка: State Management",
+      "Поточний рівень (Junior) нижчий за очікуваний (Middle)"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": -26,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": 5.44,
+      "domainMismatchAdjustment": 0,
+      "weakOverlapAdjustment": 0,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": -20.56
+    },
+    "roleContext": {
+      "jobRoleFamily": "frontend",
+      "candidateRoleFamily": "frontend",
+      "jobFamilyConfidence": 0.73,
+      "candidateFamilyConfidence": 0.63,
+      "roleContextAlignment": 1,
+      "roleContextConfidence": 0.68,
+      "alignmentBand": "strong",
+      "rawAdjustment": 0.08,
+      "effectiveAdjustment": 0.0544,
+      "adjustmentReason": "Кандидат і вакансія належать до одного рольового напряму: frontend.",
+      "jobFamilyEvidence": {
+        "evidence": {
+          "title": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.26
+          },
+          "requirements": {
+            "markerHits": [
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "typescript"
+            ],
+            "contribution": 0.2
+          },
+          "stack": {
+            "markerHits": [
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "typescript",
+              "css"
+            ],
+            "contribution": 0.2
+          },
+          "explicitBuckets": {
+            "markerHits": [
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "typescript",
+              "css"
+            ],
+            "contribution": 0.25
+          }
+        },
+        "matchedMarkers": [
+          "frontend",
+          "react",
+          "typescript",
+          "css"
+        ],
+        "familyScores": [
+          {
+            "family": "frontend",
+            "score": 0.91
+          },
+          {
+            "family": "fullstack",
+            "score": 0.91
+          },
+          {
+            "family": "backend",
+            "score": 0.62
+          },
+          {
+            "family": "qa",
+            "score": 0
+          },
+          {
+            "family": "devops",
+            "score": 0
+          },
+          {
+            "family": "data",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "recruiting",
+            "score": 0
+          }
+        ]
+      },
+      "candidateFamilyEvidence": {
+        "evidence": {
+          "position": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.18
+          },
+          "summary": {
+            "markerHits": [
+              "frontend",
+              "react"
+            ],
+            "priorityHits": [
+              "react"
+            ],
+            "contribution": 0.09
+          },
+          "skills": {
+            "markerHits": [
+              "ui",
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "javascript"
+            ],
+            "contribution": 0.18
+          },
+          "technologies": {
+            "markerHits": [
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "javascript"
+            ],
+            "contribution": 0.14
+          },
+          "historyTitles": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.12
+          }
+        },
+        "matchedMarkers": [
+          "frontend",
+          "react",
+          "ui",
+          "javascript"
+        ],
+        "familyScores": [
+          {
+            "family": "frontend",
+            "score": 0.7
+          },
+          {
+            "family": "fullstack",
+            "score": 0.7
+          },
+          {
+            "family": "qa",
+            "score": 0.15
+          },
+          {
+            "family": "backend",
+            "score": 0
+          },
+          {
+            "family": "devops",
+            "score": 0
+          },
+          {
+            "family": "data",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "recruiting",
+            "score": 0
+          }
+        ]
+      }
+    },
+    "providerStatus": "ready"
+  },
+  {
+    "fileName": "sfd_02_serhii_kramar.pdf",
+    "candidate": "Serhii Kramar",
+    "position": "Senior Frontend Developer",
+    "level": "Senior",
+    "vacancyTitle": "Senior Frontend Developer",
+    "finalMatchScore": 97.15,
+    "neuralMatchScore": 91.79,
+    "ruleBasedMatchScore": 78,
+    "recommendation": "Proceed",
+    "confidence": 0.73,
+    "strengths": [
+      "Нейромережева змістова відповідність: 97.15/100",
+      "Спільні змістові акценти: senior, frontend, developer, ., skills, react, typescript, performance",
+      "Збіг основних навичок: 7 з 13",
+      "Релевантний досвід: 5.85 р."
+    ],
+    "gaps": [
+      "Відсутня основна навичка: Architecture Design",
+      "Відсутня основна навичка: Code Review"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": 0,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": 5.36,
+      "domainMismatchAdjustment": 0,
+      "weakOverlapAdjustment": 0,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": 5.36
+    },
+    "roleContext": {
+      "jobRoleFamily": "frontend",
+      "candidateRoleFamily": "frontend",
+      "jobFamilyConfidence": 0.73,
+      "candidateFamilyConfidence": 0.62,
+      "roleContextAlignment": 1,
+      "roleContextConfidence": 0.67,
+      "alignmentBand": "strong",
+      "rawAdjustment": 0.08,
+      "effectiveAdjustment": 0.0536,
+      "adjustmentReason": "Кандидат і вакансія належать до одного рольового напряму: frontend.",
+      "jobFamilyEvidence": {
+        "evidence": {
+          "title": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.26
+          },
+          "requirements": {
+            "markerHits": [
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "typescript"
+            ],
+            "contribution": 0.2
+          },
+          "stack": {
+            "markerHits": [
+              "react",
+              "next.js"
+            ],
+            "priorityHits": [
+              "react",
+              "next.js",
+              "typescript",
+              "css"
+            ],
+            "contribution": 0.2
+          },
+          "explicitBuckets": {
+            "markerHits": [
+              "react",
+              "next.js"
+            ],
+            "priorityHits": [
+              "react",
+              "next.js",
+              "typescript",
+              "css"
+            ],
+            "contribution": 0.25
+          }
+        },
+        "matchedMarkers": [
+          "frontend",
+          "react",
+          "typescript",
+          "next.js",
+          "css"
+        ],
+        "familyScores": [
+          {
+            "family": "frontend",
+            "score": 0.91
+          },
+          {
+            "family": "fullstack",
+            "score": 0.91
+          },
+          {
+            "family": "qa",
+            "score": 0.62
+          },
+          {
+            "family": "backend",
+            "score": 0.55
+          },
+          {
+            "family": "recruiting",
+            "score": 0.38
+          },
+          {
+            "family": "devops",
+            "score": 0
+          },
+          {
+            "family": "data",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          }
+        ]
+      },
+      "candidateFamilyEvidence": {
+        "evidence": {
+          "position": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.18
+          },
+          "summary": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.07
+          },
+          "skills": {
+            "markerHits": [
+              "react",
+              "next.js"
+            ],
+            "priorityHits": [
+              "react",
+              "next.js",
+              "typescript"
+            ],
+            "contribution": 0.18
+          },
+          "technologies": {
+            "markerHits": [
+              "react",
+              "next.js"
+            ],
+            "priorityHits": [
+              "react",
+              "next.js",
+              "typescript"
+            ],
+            "contribution": 0.14
+          },
+          "historyTitles": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.12
+          }
+        },
+        "matchedMarkers": [
+          "frontend",
+          "react",
+          "next.js",
+          "typescript"
+        ],
+        "familyScores": [
+          {
+            "family": "frontend",
+            "score": 0.69
+          },
+          {
+            "family": "fullstack",
+            "score": 0.69
+          },
+          {
+            "family": "backend",
+            "score": 0.27
+          },
+          {
+            "family": "qa",
+            "score": 0.15
+          },
+          {
+            "family": "devops",
+            "score": 0
+          },
+          {
+            "family": "data",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "recruiting",
+            "score": 0
+          }
+        ]
+      }
+    },
+    "providerStatus": "ready"
+  },
+  {
+    "fileName": "sfd_02_serhii_kramar.pdf",
+    "candidate": "Serhii Kramar",
+    "position": "Senior Frontend Developer",
+    "level": "Senior",
+    "vacancyTitle": "Middle Frontend Developer",
+    "finalMatchScore": 93.59,
+    "neuralMatchScore": 88.23,
+    "ruleBasedMatchScore": 64,
+    "recommendation": "Proceed",
+    "confidence": 0.73,
+    "strengths": [
+      "Нейромережева змістова відповідність: 93.59/100",
+      "Спільні змістові акценти: frontend, developer, ., skills, react, typescript",
+      "Збіг основних навичок: 2 з 12",
+      "Релевантний досвід: 5.85 р."
+    ],
+    "gaps": [
+      "Відсутня основна навичка: REST API",
+      "Відсутня основна навичка: State Management"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": 0,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": 5.36,
+      "domainMismatchAdjustment": 0,
+      "weakOverlapAdjustment": 0,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": 5.36
+    },
+    "roleContext": {
+      "jobRoleFamily": "frontend",
+      "candidateRoleFamily": "frontend",
+      "jobFamilyConfidence": 0.73,
+      "candidateFamilyConfidence": 0.62,
+      "roleContextAlignment": 1,
+      "roleContextConfidence": 0.67,
+      "alignmentBand": "strong",
+      "rawAdjustment": 0.08,
+      "effectiveAdjustment": 0.0536,
+      "adjustmentReason": "Кандидат і вакансія належать до одного рольового напряму: frontend.",
+      "jobFamilyEvidence": {
+        "evidence": {
+          "title": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.26
+          },
+          "requirements": {
+            "markerHits": [
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "typescript"
+            ],
+            "contribution": 0.2
+          },
+          "stack": {
+            "markerHits": [
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "typescript",
+              "css"
+            ],
+            "contribution": 0.2
+          },
+          "explicitBuckets": {
+            "markerHits": [
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "typescript",
+              "css"
+            ],
+            "contribution": 0.25
+          }
+        },
+        "matchedMarkers": [
+          "frontend",
+          "react",
+          "typescript",
+          "css"
+        ],
+        "familyScores": [
+          {
+            "family": "frontend",
+            "score": 0.91
+          },
+          {
+            "family": "fullstack",
+            "score": 0.91
+          },
+          {
+            "family": "backend",
+            "score": 0.62
+          },
+          {
+            "family": "qa",
+            "score": 0
+          },
+          {
+            "family": "devops",
+            "score": 0
+          },
+          {
+            "family": "data",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "recruiting",
+            "score": 0
+          }
+        ]
+      },
+      "candidateFamilyEvidence": {
+        "evidence": {
+          "position": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.18
+          },
+          "summary": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.07
+          },
+          "skills": {
+            "markerHits": [
+              "react",
+              "next.js"
+            ],
+            "priorityHits": [
+              "react",
+              "next.js",
+              "typescript"
+            ],
+            "contribution": 0.18
+          },
+          "technologies": {
+            "markerHits": [
+              "react",
+              "next.js"
+            ],
+            "priorityHits": [
+              "react",
+              "next.js",
+              "typescript"
+            ],
+            "contribution": 0.14
+          },
+          "historyTitles": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.12
+          }
+        },
+        "matchedMarkers": [
+          "frontend",
+          "react",
+          "next.js",
+          "typescript"
+        ],
+        "familyScores": [
+          {
+            "family": "frontend",
+            "score": 0.69
+          },
+          {
+            "family": "fullstack",
+            "score": 0.69
+          },
+          {
+            "family": "backend",
+            "score": 0.27
+          },
+          {
+            "family": "qa",
+            "score": 0.15
+          },
+          {
+            "family": "devops",
+            "score": 0
+          },
+          {
+            "family": "data",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "recruiting",
+            "score": 0
+          }
+        ]
+      }
+    },
+    "providerStatus": "ready"
+  },
+  {
+    "fileName": "mpbd_02_tetiana_riabokon.pdf",
+    "candidate": "Tetiana Riabokon",
+    "position": "Middle Python Backend Developer",
+    "level": "Senior",
+    "vacancyTitle": "Middle Python Backend Developer",
+    "finalMatchScore": 92.52,
+    "neuralMatchScore": 92.94,
+    "ruleBasedMatchScore": 74,
+    "recommendation": "Proceed",
+    "confidence": 0.73,
+    "strengths": [
+      "Нейромережева змістова відповідність: 92.52/100",
+      "Спільні змістові акценти: middle, python, backend, developer, ., api, skills, django",
+      "Збіг основних навичок: 9 з 12",
+      "Релевантний досвід: 5 р."
+    ],
+    "gaps": [
+      "Відсутня основна навичка: Git",
+      "Відсутня основна навичка: Problem Solving"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": 0,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": -0.42,
+      "domainMismatchAdjustment": 0,
+      "weakOverlapAdjustment": 0,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": -0.42
+    },
+    "roleContext": {
+      "jobRoleFamily": "data",
+      "candidateRoleFamily": "backend",
+      "jobFamilyConfidence": 0.75,
+      "candidateFamilyConfidence": 0.66,
+      "roleContextAlignment": 0.45,
+      "roleContextConfidence": 0.7,
+      "alignmentBand": "medium",
+      "rawAdjustment": -0.006,
+      "effectiveAdjustment": -0.0042,
+      "adjustmentReason": "Напрям кандидата backend є суміжним до напряму вакансії data.",
+      "jobFamilyEvidence": {
+        "evidence": {
+          "title": {
+            "markerHits": [],
+            "priorityHits": [
+              "python"
+            ],
+            "contribution": 0.3
+          },
+          "requirements": {
+            "markerHits": [],
+            "priorityHits": [
+              "python",
+              "sql"
+            ],
+            "contribution": 0.2
+          },
+          "stack": {
+            "markerHits": [],
+            "priorityHits": [
+              "python"
+            ],
+            "contribution": 0.17
+          },
+          "explicitBuckets": {
+            "markerHits": [],
+            "priorityHits": [
+              "python",
+              "sql"
+            ],
+            "contribution": 0.25
+          }
+        },
+        "matchedMarkers": [
+          "python",
+          "sql"
+        ],
+        "familyScores": [
+          {
+            "family": "data",
+            "score": 0.92
+          },
+          {
+            "family": "backend",
+            "score": 0.88
+          },
+          {
+            "family": "devops",
+            "score": 0.38
+          },
+          {
+            "family": "fullstack",
+            "score": 0.26
+          },
+          {
+            "family": "frontend",
+            "score": 0
+          },
+          {
+            "family": "qa",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "recruiting",
+            "score": 0
+          }
+        ]
+      },
+      "candidateFamilyEvidence": {
+        "evidence": {
+          "position": {
+            "markerHits": [
+              "backend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.18
+          },
+          "summary": {
+            "markerHits": [
+              "api"
+            ],
+            "priorityHits": [
+              "postgresql",
+              "docker"
+            ],
+            "contribution": 0.1
+          },
+          "skills": {
+            "markerHits": [
+              "backend",
+              "api"
+            ],
+            "priorityHits": [],
+            "contribution": 0.16
+          },
+          "technologies": {
+            "markerHits": [],
+            "priorityHits": [
+              "postgresql",
+              "docker"
+            ],
+            "contribution": 0.14
+          },
+          "historyTitles": {
+            "markerHits": [
+              "backend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.12
+          }
+        },
+        "matchedMarkers": [
+          "backend",
+          "api",
+          "postgresql",
+          "docker"
+        ],
+        "familyScores": [
+          {
+            "family": "backend",
+            "score": 0.7
+          },
+          {
+            "family": "data",
+            "score": 0.54
+          },
+          {
+            "family": "fullstack",
+            "score": 0.42
+          },
+          {
+            "family": "qa",
+            "score": 0.24
+          },
+          {
+            "family": "devops",
+            "score": 0.2
+          },
+          {
+            "family": "frontend",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "recruiting",
+            "score": 0
+          }
+        ]
+      }
+    },
+    "providerStatus": "ready"
+  },
+  {
+    "fileName": "jr_02_anastasiia_boyko.pdf",
+    "candidate": "Anastasiia Boyko",
+    "position": "Junior Recruiter",
+    "level": "Junior",
+    "vacancyTitle": "Junior Recruiter",
+    "finalMatchScore": 98.82,
+    "neuralMatchScore": 92.82,
+    "ruleBasedMatchScore": 73,
+    "recommendation": "Proceed",
+    "confidence": 0.72,
+    "strengths": [
+      "Нейромережева змістова відповідність: 98.82/100",
+      "Спільні змістові акценти: junior, recruiter, ., skills, communication, candidate, search, interview",
+      "Збіг основних навичок: 6 з 10",
+      "Релевантний досвід: 1.3 р."
+    ],
+    "gaps": [
+      "Відсутня основна навичка: Attention to Detail",
+      "Відсутня основна навичка: Teamwork"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": 0,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": 6,
+      "domainMismatchAdjustment": 0,
+      "weakOverlapAdjustment": 0,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": 6
+    },
+    "roleContext": {
+      "jobRoleFamily": "recruiting",
+      "candidateRoleFamily": "recruiting",
+      "jobFamilyConfidence": 0.91,
+      "candidateFamilyConfidence": 0.66,
+      "roleContextAlignment": 1,
+      "roleContextConfidence": 0.77,
+      "alignmentBand": "strong",
+      "rawAdjustment": 0.08,
+      "effectiveAdjustment": 0.0616,
+      "adjustmentReason": "Кандидат і вакансія належать до одного рольового напряму: recruiting.",
+      "jobFamilyEvidence": {
+        "evidence": {
+          "title": {
+            "markerHits": [
+              "recruiter"
+            ],
+            "priorityHits": [],
+            "contribution": 0.26
+          },
+          "requirements": {
+            "markerHits": [
+              "candidate search",
+              "interview scheduling"
+            ],
+            "priorityHits": [
+              "candidate search",
+              "interview scheduling",
+              "communication"
+            ],
+            "contribution": 0.2
+          },
+          "stack": {
+            "markerHits": [],
+            "priorityHits": [
+              "linkedin",
+              "ats",
+              "google sheets"
+            ],
+            "contribution": 0.2
+          },
+          "explicitBuckets": {
+            "markerHits": [
+              "candidate search",
+              "interview scheduling"
+            ],
+            "priorityHits": [
+              "candidate search",
+              "interview scheduling",
+              "linkedin",
+              "ats",
+              "google sheets",
+              "communication"
+            ],
+            "contribution": 0.25
+          }
+        },
+        "matchedMarkers": [
+          "recruiter",
+          "candidate search",
+          "interview scheduling",
+          "communication",
+          "linkedin",
+          "ats",
+          "google sheets"
+        ],
+        "familyScores": [
+          {
+            "family": "recruiting",
+            "score": 0.91
+          },
+          {
+            "family": "backend",
+            "score": 0
+          },
+          {
+            "family": "frontend",
+            "score": 0
+          },
+          {
+            "family": "qa",
+            "score": 0
+          },
+          {
+            "family": "devops",
+            "score": 0
+          },
+          {
+            "family": "data",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "fullstack",
+            "score": 0
+          }
+        ]
+      },
+      "candidateFamilyEvidence": {
+        "evidence": {
+          "position": {
+            "markerHits": [
+              "recruiter"
+            ],
+            "priorityHits": [],
+            "contribution": 0.18
+          },
+          "skills": {
+            "markerHits": [
+              "recruitment",
+              "sourcing",
+              "candidate search",
+              "interview scheduling",
+              "hiring"
+            ],
+            "priorityHits": [
+              "candidate search",
+              "sourcing",
+              "interview scheduling",
+              "communication"
+            ],
+            "contribution": 0.18
+          },
+          "technologies": {
+            "markerHits": [],
+            "priorityHits": [
+              "linkedin"
+            ],
+            "contribution": 0.12
+          },
+          "historyTitles": {
+            "markerHits": [
+              "recruiter"
+            ],
+            "priorityHits": [],
+            "contribution": 0.12
+          }
+        },
+        "matchedMarkers": [
+          "recruiter",
+          "recruitment",
+          "sourcing",
+          "candidate search",
+          "interview scheduling",
+          "hiring",
+          "communication",
+          "linkedin"
+        ],
+        "familyScores": [
+          {
+            "family": "recruiting",
+            "score": 0.59
+          },
+          {
+            "family": "backend",
+            "score": 0
+          },
+          {
+            "family": "frontend",
+            "score": 0
+          },
+          {
+            "family": "qa",
+            "score": 0
+          },
+          {
+            "family": "devops",
+            "score": 0
+          },
+          {
+            "family": "data",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "fullstack",
+            "score": 0
+          }
+        ]
+      }
+    },
+    "providerStatus": "ready"
+  },
+  {
+    "fileName": "jr_02_anastasiia_boyko.pdf",
+    "candidate": "Anastasiia Boyko",
+    "position": "Junior Recruiter",
+    "level": "Junior",
+    "vacancyTitle": "Junior Frontend Developer",
+    "finalMatchScore": 66.9,
+    "neuralMatchScore": 84.54,
+    "ruleBasedMatchScore": 41,
+    "recommendation": "Review manually",
+    "confidence": 0.72,
+    "strengths": [
+      "Нейромережева змістова відповідність: 66.9/100",
+      "Спільні змістові акценти: junior, ., skills",
+      "Збіг основних навичок: 0 з 10",
+      "Релевантний досвід: 1.3 р."
+    ],
+    "gaps": [
+      "Відсутня основна навичка: HTML",
+      "Відсутня основна навичка: CSS"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": 0,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": -3.64,
+      "domainMismatchAdjustment": -14,
+      "weakOverlapAdjustment": 0,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": -17.64
+    },
+    "roleContext": {
+      "jobRoleFamily": "frontend",
+      "candidateRoleFamily": "recruiting",
+      "jobFamilyConfidence": 0.74,
+      "candidateFamilyConfidence": 0.66,
+      "roleContextAlignment": 0.24,
+      "roleContextConfidence": 0.7,
+      "alignmentBand": "weak",
+      "rawAdjustment": -0.052,
+      "effectiveAdjustment": -0.0364,
+      "adjustmentReason": "Напрям кандидата recruiting слабко узгоджується з напрямом вакансії frontend.",
+      "jobFamilyEvidence": {
+        "evidence": {
+          "title": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.26
+          },
+          "requirements": {
+            "markerHits": [],
+            "priorityHits": [
+              "javascript",
+              "css",
+              "html"
+            ],
+            "contribution": 0.2
+          },
+          "stack": {
+            "markerHits": [
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "javascript",
+              "css",
+              "html"
+            ],
+            "contribution": 0.2
+          },
+          "explicitBuckets": {
+            "markerHits": [
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "javascript",
+              "css",
+              "html"
+            ],
+            "contribution": 0.25
+          }
+        },
+        "matchedMarkers": [
+          "frontend",
+          "javascript",
+          "css",
+          "html",
+          "react"
+        ],
+        "familyScores": [
+          {
+            "family": "frontend",
+            "score": 0.91
+          },
+          {
+            "family": "fullstack",
+            "score": 0.88
+          },
+          {
+            "family": "backend",
+            "score": 0.38
+          },
+          {
+            "family": "qa",
+            "score": 0
+          },
+          {
+            "family": "devops",
+            "score": 0
+          },
+          {
+            "family": "data",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "recruiting",
+            "score": 0
+          }
+        ]
+      },
+      "candidateFamilyEvidence": {
+        "evidence": {
+          "position": {
+            "markerHits": [
+              "recruiter"
+            ],
+            "priorityHits": [],
+            "contribution": 0.18
+          },
+          "skills": {
+            "markerHits": [
+              "recruitment",
+              "sourcing",
+              "candidate search",
+              "interview scheduling",
+              "hiring"
+            ],
+            "priorityHits": [
+              "candidate search",
+              "sourcing",
+              "interview scheduling",
+              "communication"
+            ],
+            "contribution": 0.18
+          },
+          "technologies": {
+            "markerHits": [],
+            "priorityHits": [
+              "linkedin"
+            ],
+            "contribution": 0.12
+          },
+          "historyTitles": {
+            "markerHits": [
+              "recruiter"
+            ],
+            "priorityHits": [],
+            "contribution": 0.12
+          }
+        },
+        "matchedMarkers": [
+          "recruiter",
+          "recruitment",
+          "sourcing",
+          "candidate search",
+          "interview scheduling",
+          "hiring",
+          "communication",
+          "linkedin"
+        ],
+        "familyScores": [
+          {
+            "family": "recruiting",
+            "score": 0.59
+          },
+          {
+            "family": "backend",
+            "score": 0
+          },
+          {
+            "family": "frontend",
+            "score": 0
+          },
+          {
+            "family": "qa",
+            "score": 0
+          },
+          {
+            "family": "devops",
+            "score": 0
+          },
+          {
+            "family": "data",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "fullstack",
+            "score": 0
+          }
+        ]
+      }
+    },
+    "providerStatus": "ready"
+  },
+  {
+    "fileName": "jfd_01_ihor_tkachuk.pdf",
+    "candidate": "Ihor Tkachuk",
+    "position": "Junior Frontend Developer",
+    "level": "Junior",
+    "vacancyTitle": "Junior Recruiter",
+    "finalMatchScore": 67.14,
+    "neuralMatchScore": 85.09,
+    "ruleBasedMatchScore": 41,
+    "recommendation": "Review manually",
+    "confidence": 0.72,
+    "strengths": [
+      "Нейромережева змістова відповідність: 67.14/100",
+      "Спільні змістові акценти: junior, ., skills",
+      "Збіг основних навичок: 0 з 10",
+      "Релевантний досвід: 1.3 р."
+    ],
+    "gaps": [
+      "Відсутня основна навичка: Communication",
+      "Відсутня основна навичка: Candidate Search"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": 0,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": -3.95,
+      "domainMismatchAdjustment": -14,
+      "weakOverlapAdjustment": 0,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": -17.95
+    },
+    "roleContext": {
+      "jobRoleFamily": "recruiting",
+      "candidateRoleFamily": "frontend",
+      "jobFamilyConfidence": 0.91,
+      "candidateFamilyConfidence": 0.63,
+      "roleContextAlignment": 0.24,
+      "roleContextConfidence": 0.76,
+      "alignmentBand": "weak",
+      "rawAdjustment": -0.052,
+      "effectiveAdjustment": -0.0395,
+      "adjustmentReason": "Напрям кандидата frontend слабко узгоджується з напрямом вакансії recruiting.",
+      "jobFamilyEvidence": {
+        "evidence": {
+          "title": {
+            "markerHits": [
+              "recruiter"
+            ],
+            "priorityHits": [],
+            "contribution": 0.26
+          },
+          "requirements": {
+            "markerHits": [
+              "candidate search",
+              "interview scheduling"
+            ],
+            "priorityHits": [
+              "candidate search",
+              "interview scheduling",
+              "communication"
+            ],
+            "contribution": 0.2
+          },
+          "stack": {
+            "markerHits": [],
+            "priorityHits": [
+              "linkedin",
+              "ats",
+              "google sheets"
+            ],
+            "contribution": 0.2
+          },
+          "explicitBuckets": {
+            "markerHits": [
+              "candidate search",
+              "interview scheduling"
+            ],
+            "priorityHits": [
+              "candidate search",
+              "interview scheduling",
+              "linkedin",
+              "ats",
+              "google sheets",
+              "communication"
+            ],
+            "contribution": 0.25
+          }
+        },
+        "matchedMarkers": [
+          "recruiter",
+          "candidate search",
+          "interview scheduling",
+          "communication",
+          "linkedin",
+          "ats",
+          "google sheets"
+        ],
+        "familyScores": [
+          {
+            "family": "recruiting",
+            "score": 0.91
+          },
+          {
+            "family": "backend",
+            "score": 0
+          },
+          {
+            "family": "frontend",
+            "score": 0
+          },
+          {
+            "family": "qa",
+            "score": 0
+          },
+          {
+            "family": "devops",
+            "score": 0
+          },
+          {
+            "family": "data",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "fullstack",
+            "score": 0
+          }
+        ]
+      },
+      "candidateFamilyEvidence": {
+        "evidence": {
+          "position": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.18
+          },
+          "summary": {
+            "markerHits": [
+              "ui"
+            ],
+            "priorityHits": [],
+            "contribution": 0.07
+          },
+          "skills": {
+            "markerHits": [
+              "ui",
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "javascript"
+            ],
+            "contribution": 0.18
+          },
+          "technologies": {
+            "markerHits": [
+              "react"
+            ],
+            "priorityHits": [
+              "react",
+              "typescript"
+            ],
+            "contribution": 0.14
+          },
+          "historyTitles": {
+            "markerHits": [
+              "frontend"
+            ],
+            "priorityHits": [],
+            "contribution": 0.12
+          }
+        },
+        "matchedMarkers": [
+          "frontend",
+          "ui",
+          "react",
+          "javascript",
+          "typescript"
+        ],
+        "familyScores": [
+          {
+            "family": "frontend",
+            "score": 0.69
+          },
+          {
+            "family": "fullstack",
+            "score": 0.61
+          },
+          {
+            "family": "backend",
+            "score": 0.34
+          },
+          {
+            "family": "qa",
+            "score": 0
+          },
+          {
+            "family": "devops",
+            "score": 0
+          },
+          {
+            "family": "data",
+            "score": 0
+          },
+          {
+            "family": "mobile",
+            "score": 0
+          },
+          {
+            "family": "recruiting",
+            "score": 0
+          }
+        ]
+      }
+    },
+    "providerStatus": "ready"
+  }
+]

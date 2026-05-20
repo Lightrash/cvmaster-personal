@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+﻿import { create } from 'zustand';
 import { loginUser, registerUser } from '@/services/api';
 import type { AuthUser } from '@/types';
 
@@ -68,7 +68,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({
         isLoading: false,
         isAuthenticated: false,
-        error: error instanceof Error ? error.message : 'Login failed',
+        error: error instanceof Error ? error.message : 'Не вдалося виконати вхід',
       });
       throw error;
     }
@@ -84,7 +84,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({
         isLoading: false,
         isAuthenticated: false,
-        error: error instanceof Error ? error.message : 'Registration failed',
+        error: error instanceof Error ? error.message : 'Не вдалося створити обліковий запис',
       });
       throw error;
     }
@@ -97,3 +97,4 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   clearError: () => set({ error: null }),
 }));
+

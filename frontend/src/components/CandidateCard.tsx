@@ -1,8 +1,9 @@
-import { useSortable } from '@dnd-kit/sortable';
+﻿import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { RefreshCw, Calendar, FileText, ArrowRight, UserRoundSearch } from 'lucide-react';
 import type { Candidate } from '@/types';
+import { translateCandidateLevel } from '@/lib/uiText';
 
 interface CandidateCardProps {
   candidate: Candidate;
@@ -93,7 +94,7 @@ export function CandidateCard({
           </div>
           <div className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800">
             <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400">
-              {candidate.resumeAnalysis.level}
+              {translateCandidateLevel(candidate.resumeAnalysis.level)}
             </span>
           </div>
           {onViewAnalysis && (
@@ -106,7 +107,7 @@ export function CandidateCard({
               onPointerDown={(e) => e.stopPropagation()}
               className="ml-auto p-1 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
               style={{ cursor: 'pointer', pointerEvents: 'auto' }}
-              title="View AI analysis"
+              title="Переглянути аналіз"
               type="button"
             >
               <FileText className="w-3 h-3 text-neutral-400" />
@@ -126,7 +127,7 @@ export function CandidateCard({
         </div>
         {isOverdue && (
           <div className="ml-auto text-[10px] font-semibold text-amber-600 dark:text-amber-400">
-            Overdue
+            Прострочено
           </div>
         )}
       </div>
@@ -142,10 +143,10 @@ export function CandidateCard({
             }}
             onPointerDown={(e) => e.stopPropagation()}
             className="h-7 px-2 rounded-md text-[11px] font-medium bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-100 inline-flex items-center gap-1"
-            title="Open profile"
+            title="Відкрити профіль"
           >
             <UserRoundSearch className="w-3 h-3" />
-            Open
+            Відкрити
           </button>
 
           <button
@@ -157,10 +158,10 @@ export function CandidateCard({
             }}
             onPointerDown={(e) => e.stopPropagation()}
             className="ml-auto h-7 px-2 rounded-md text-[11px] font-medium bg-blue-50 dark:bg-blue-900/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 inline-flex items-center gap-1"
-            title="Move to next stage"
+            title="Перевести на наступний етап"
           >
             <ArrowRight className="w-3 h-3" />
-            Next
+            Далі
           </button>
         </div>
       )}

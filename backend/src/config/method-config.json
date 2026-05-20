@@ -1,6 +1,11 @@
 {
   "__description_uk": "Конфіг самостійного методу скорингу. Редагуй тільки ці параметри, без змін у коді.",
   "version": "deterministic-v3",
+  "__comment_levelInference": "������������� ������ ���� ��������� �� ������ ������.",
+  "levelInference": {
+    "middleMinYears": 3,
+    "seniorMinYears": 5
+  },
   "__comment_profileWeights": "Ваги для розрахунку overallScore (сума буде автоматично нормалізована до 1).",
   "profileWeights": {
     "years": 0.4,
@@ -28,7 +33,425 @@
     "exact": 1,
     "synonym": 0.85,
     "related": 0.5,
-    "none": 0
+    "none": 0,
+    "relatedTokenOverlap": 0.35
+  },
+  "__comment_skillMatching": "???????? ??? semantic skill matching ? markers ??? heuristic parsing ????????.",
+  "skillMatching": {
+    "synonymGroups": [
+      [
+        "javascript",
+        "js"
+      ],
+      [
+        "typescript",
+        "ts"
+      ],
+      [
+        "node.js",
+        "node",
+        "nodejs"
+      ],
+      [
+        "react",
+        "react.js",
+        "reactjs"
+      ],
+      [
+        "vue",
+        "vue.js",
+        "vuejs"
+      ],
+      [
+        "angular",
+        "angular.js",
+        "angularjs"
+      ],
+      [
+        "next.js",
+        "nextjs"
+      ],
+      [
+        "nestjs",
+        "nest.js"
+      ],
+      [
+        "postgresql",
+        "postgres"
+      ],
+      [
+        "mongodb",
+        "mongo"
+      ],
+      [
+        "kubernetes",
+        "k8s"
+      ],
+      [
+        "aws",
+        "amazon web services"
+      ],
+      [
+        "gcp",
+        "google cloud platform"
+      ],
+      [
+        "rest api",
+        "rest",
+        "restful api"
+      ],
+      [
+        "ci/cd",
+        "cicd",
+        "continuous integration",
+        "continuous delivery"
+      ],
+      [
+        "qa",
+        "quality assurance"
+      ]
+    ],
+    "relatedGroups": [
+      [
+        "javascript",
+        "typescript",
+        "node.js",
+        "react",
+        "vue",
+        "angular",
+        "next.js"
+      ],
+      [
+        "node.js",
+        "express",
+        "nestjs",
+        "rest api",
+        "graphql",
+        "microservices"
+      ],
+      [
+        "sql",
+        "postgresql",
+        "mysql",
+        "mongodb",
+        "redis"
+      ],
+      [
+        "aws",
+        "azure",
+        "gcp",
+        "docker",
+        "kubernetes",
+        "terraform",
+        "ci/cd"
+      ],
+      [
+        "qa",
+        "testing",
+        "playwright",
+        "cypress",
+        "selenium",
+        "jest"
+      ],
+      [
+        "python",
+        "django",
+        "flask",
+        "fastapi",
+        "pandas"
+      ],
+      [
+        "php",
+        "laravel",
+        "symfony"
+      ]
+    ],
+    "criticalMarkers": [
+      "must have",
+      "must-have",
+      "required",
+      "mandatory",
+      "essential"
+    ],
+    "optionalMarkers": [
+      "nice to have",
+      "nice-to-have",
+      "preferred",
+      "plus",
+      "bonus"
+    ],
+    "genericRoleTokens": [
+      "developer",
+      "engineer",
+      "specialist",
+      "manager",
+      "software",
+      "team",
+      "lead",
+      "senior",
+      "middle",
+      "junior",
+      "intern",
+      "trainee"
+    ],
+    "tokenOverlapRelatedThreshold": 0.5
+  },
+  "__comment_bucketBuilding": "Правила пріоритету explicit buckets вакансії над heuristic parsing requirements.",
+  "bucketBuilding": {
+    "explicitPrecedenceMode": "primary",
+    "useHeuristicsWhenExplicitPartial": true,
+    "stackDefaultBucket": "core",
+    "deduplicateAcrossBuckets": true
+  },
+  "__comment_roleContextMatching": "Role-family/context alignment ?? bounded post-adjustment ?????? base vacancy match.",
+  "roleContextMatching": {
+    "enabled": true,
+    "families": {
+      "backend": {
+        "markers": [
+          "backend",
+          "api",
+          "microservices",
+          "server-side",
+          "node.js",
+          "nestjs",
+          "express"
+        ],
+        "prioritySkills": [
+          "node.js",
+          "typescript",
+          "postgresql",
+          "rest api",
+          "docker",
+          "aws"
+        ]
+      },
+      "frontend": {
+        "markers": [
+          "frontend",
+          "ui",
+          "client-side",
+          "react",
+          "vue",
+          "angular",
+          "next.js"
+        ],
+        "prioritySkills": [
+          "react",
+          "next.js",
+          "javascript",
+          "typescript",
+          "css",
+          "html"
+        ]
+      },
+      "qa": {
+        "markers": [
+          "qa",
+          "quality assurance",
+          "testing",
+          "automation",
+          "test engineer"
+        ],
+        "prioritySkills": [
+          "playwright",
+          "cypress",
+          "selenium",
+          "qa",
+          "testing",
+          "jest"
+        ]
+      },
+      "recruiting": {
+        "markers": [
+          "recruiter",
+          "recruitment",
+          "talent acquisition",
+          "sourcing",
+          "candidate search",
+          "interview scheduling",
+          "hiring"
+        ],
+        "prioritySkills": [
+          "candidate search",
+          "sourcing",
+          "interview scheduling",
+          "linkedin",
+          "ats",
+          "google sheets",
+          "communication"
+        ]
+      },
+      "devops": {
+        "markers": [
+          "devops",
+          "sre",
+          "platform",
+          "infrastructure",
+          "cloud",
+          "kubernetes",
+          "terraform"
+        ],
+        "prioritySkills": [
+          "docker",
+          "kubernetes",
+          "terraform",
+          "aws",
+          "gcp",
+          "ci/cd"
+        ]
+      },
+      "data": {
+        "markers": [
+          "data",
+          "etl",
+          "warehouse",
+          "analytics",
+          "ml",
+          "machine learning"
+        ],
+        "prioritySkills": [
+          "python",
+          "sql",
+          "spark",
+          "airflow",
+          "pandas",
+          "dbt"
+        ]
+      },
+      "mobile": {
+        "markers": [
+          "mobile",
+          "android",
+          "ios",
+          "react native",
+          "flutter"
+        ],
+        "prioritySkills": [
+          "react native",
+          "flutter",
+          "swift",
+          "kotlin",
+          "ios",
+          "android"
+        ]
+      },
+      "fullstack": {
+        "markers": [
+          "fullstack",
+          "full-stack",
+          "frontend",
+          "backend"
+        ],
+        "prioritySkills": [
+          "javascript",
+          "typescript",
+          "react",
+          "node.js",
+          "next.js"
+        ]
+      },
+      "generic": {
+        "markers": [
+          "developer",
+          "engineer",
+          "specialist",
+          "software"
+        ],
+        "prioritySkills": []
+      }
+    },
+    "adjacency": {
+      "backend:fullstack": 0.82,
+      "frontend:fullstack": 0.82,
+      "backend:devops": 0.68,
+      "backend:data": 0.45,
+      "frontend:mobile": 0.55,
+      "qa:backend": 0.35,
+      "qa:frontend": 0.35
+    },
+    "weights": {
+      "job": {
+        "title": 0.35,
+        "requirements": 0.2,
+        "stack": 0.2,
+        "explicitBuckets": 0.25
+      },
+      "candidate": {
+        "position": 0.24,
+        "summary": 0.1,
+        "skills": 0.18,
+        "technologies": 0.14,
+        "historyTitles": 0.16,
+        "historyDescriptions": 0.1,
+        "projects": 0.08
+      }
+    },
+    "scoring": {
+      "sameFamilyScore": 1,
+      "genericFamilyScore": 0.54,
+      "unknownFamilyScore": 0.5,
+      "adjacentFamilyFloor": 0.62,
+      "crossFamilyScore": 0.24,
+      "matchBonusMax": 0.08,
+      "mismatchPenaltyMax": 0.1,
+      "nearNeutralMax": 0.015
+    },
+    "thresholds": {
+      "strongAlignmentMin": 0.75,
+      "weakAlignmentMax": 0.4,
+      "minimumFamilyConfidence": 0.25
+    }
+  },
+  "__comment_neuralMatching": "Neural-first vacancy match: embeddings-based semantic similarity is primary, deterministic rules are bounded secondary adjustments.",
+  "neuralMatching": {
+    "enabled": true,
+    "provider": {
+      "provider": "google",
+      "model": "gemini-embedding-001",
+      "allowFallbackToRuleBased": true
+    },
+    "semanticTextBuilding": {
+      "maxOverallChars": 3600,
+      "maxItemChars": 180,
+      "maxSkillsItems": 16,
+      "maxTechnologiesItems": 12,
+      "maxHistoryTitleItems": 6,
+      "maxHistoryDetailItems": 6,
+      "maxProjectItems": 4,
+      "maxRequirementItems": 12,
+      "maxStackItems": 10,
+      "maxLanguageItems": 5
+    },
+    "neuralWeights": {
+      "overall": 0.5,
+      "skills": 0.3,
+      "experience": 0.2
+    },
+    "ruleAdjustments": {
+      "criticalPenaltyPerMissing": 12,
+      "maxCriticalPenalty": 18,
+      "lowConfidencePenaltyThreshold": 0.58,
+      "maxConfidencePenalty": 18,
+      "roleContextPositiveMax": 6,
+      "roleContextNegativeMax": 8,
+      "crossDomainMismatchPenalty": 14,
+      "unknownDomainMismatchPenalty": 10,
+      "weakCoreCoverageThreshold": 0.35,
+      "weakOverlapPenalty": 12,
+      "veryLowRuleBasedThreshold": 45,
+      "severeSemanticMismatchThreshold": 0.3,
+      "severeSemanticMismatchPenalty": 10,
+      "levelMismatchPenaltyPerLevel": 26,
+      "lowCriticalCoveragePenaltyMax": 20,
+      "sparseVacancyPenaltyMax": 14
+    },
+    "finalScore": {
+      "recommendationThresholds": {
+        "proceedMin": 70,
+        "reviewMin": 40
+      }
+    }
   },
   "__comment_recommendationThresholds": "Пороги рекомендацій у відсотках.",
   "recommendationThresholds": {
@@ -75,16 +498,64 @@
     },
     "relevantExperienceHeuristic": {
       "minimumRelevantRatio": 0.25,
-      "roleRecencyDecay": 0.72,
+      "dateRecencyHalfLife": 2.5,
+      "indexFallbackDecay": 0.72,
       "titleOverlapWeight": 0.45,
       "skillOverlapWeight": 0.35,
-      "currentRoleBonus": 0.2
+      "currentRoleBonus": 0.2,
+      "requireDateForStrongRecencyBonus": true,
+      "maxRoleDateGapPenalty": 0.3
     },
     "matchExperience": {
       "relevantYearsWeight": 0.75,
       "generalYearsFallbackWeight": 0.25,
       "noRequirementDefaultYears": 2
     }
+  },
+  "__comment_confidenceScoring": "Confidence/data quality layer поверх існуючих score formulas. Не змінює самі бали, а оцінює надійність результату.",
+  "confidenceScoring": {
+    "profile": {
+      "skillsPresence": 0.12,
+      "technologiesPresence": 0.12,
+      "educationPresence": 0.07,
+      "languagesPresence": 0.06,
+      "workHistoryPresence": 0.18,
+      "summaryPresence": 0.08,
+      "explicitYears": 0.1,
+      "hardSkillEvidence": 0.17,
+      "relevantYearsExplicit": 0.1
+    },
+    "match": {
+      "titlePresence": 0.11,
+      "requirementsPresence": 0.16,
+      "stackPresence": 0.1,
+      "explicitBuckets": 0.13,
+      "requiredYearsClarity": 0.1,
+      "expectedLevelClarity": 0.08,
+      "bucketQuality": 0.16,
+      "candidateEvidence": 0.08,
+      "heuristicAssumptions": 0.08
+    }
+  },
+  "__comment_confidenceThresholds": "Пороги confidence для пояснень і м'якого зниження рекомендації.",
+  "confidenceThresholds": {
+    "lowProfile": 0.45,
+    "lowMatch": 0.5,
+    "proceedDowngradeThreshold": 0.58
+  },
+  "__comment_flagThresholds": "Thresholds для flags у confidence/data quality layer.",
+  "flagThresholds": {
+    "minCandidateSkills": 3,
+    "minCandidateTechnologies": 2,
+    "minLanguages": 1,
+    "minRequirementItems": 2,
+    "minStackItems": 1,
+    "minSkillBucketsTotal": 2,
+    "weakRequirementsTextMinChars": 40,
+    "weakSkillEvidenceMinSourceCount": 1.6,
+    "weakSkillEvidenceMinEvidenceBonus": 0.35,
+    "sparseProfileScoreThreshold": 0.45,
+    "sparseMatchScoreThreshold": 0.5
   },
   "__comment_languageScoresByCount": "Бали за кількість мов у профілі кандидата.",
   "languageScoresByCount": {
@@ -104,13 +575,37 @@
   },
   "__comment_yearsScoreBands": "Таблиця перетворення yearsOfExperience у шкалу 1..10.",
   "yearsScoreBands": [
-    { "maxYears": 0, "score": 1 },
-    { "maxYears": 1, "score": 3 },
-    { "maxYears": 2, "score": 5 },
-    { "maxYears": 3, "score": 6 },
-    { "maxYears": 4, "score": 7 },
-    { "maxYears": 6, "score": 8 },
-    { "maxYears": 8, "score": 9 },
-    { "maxYears": 50, "score": 10 }
+    {
+      "maxYears": 0,
+      "score": 1
+    },
+    {
+      "maxYears": 1,
+      "score": 3
+    },
+    {
+      "maxYears": 2,
+      "score": 5
+    },
+    {
+      "maxYears": 3,
+      "score": 6
+    },
+    {
+      "maxYears": 4,
+      "score": 7
+    },
+    {
+      "maxYears": 6,
+      "score": 8
+    },
+    {
+      "maxYears": 8,
+      "score": 9
+    },
+    {
+      "maxYears": 50,
+      "score": 10
+    }
   ]
 }

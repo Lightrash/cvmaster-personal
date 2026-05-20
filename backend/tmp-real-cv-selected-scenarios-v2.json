@@ -1,0 +1,298 @@
+[
+  {
+    "fileName": "jfd_01_ihor_tkachuk.pdf",
+    "candidate": "Ihor Tkachuk",
+    "position": "Junior Frontend Developer",
+    "level": "Junior",
+    "vacancyTitle": "Junior Frontend Developer",
+    "finalMatchScore": 98.09,
+    "neuralMatchScore": 92.65,
+    "ruleBasedMatchScore": 78,
+    "recommendation": "Proceed",
+    "confidence": 0.72,
+    "strengths": [
+      "Нейромережева змістова відповідність: 98.09/100",
+      "Спільні змістові акценти: junior, frontend, developer, ., skills, javascript, responsive, design",
+      "Збіг основних навичок: 6 з 10",
+      "Релевантний досвід: 1.3 р."
+    ],
+    "gaps": [
+      "Відсутня основна навичка: HTML",
+      "Відсутня основна навичка: CSS"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": 0,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": 5.44,
+      "domainMismatchAdjustment": 0,
+      "weakOverlapAdjustment": 0,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": 5.44
+    },
+    "providerStatus": "ready"
+  },
+  {
+    "fileName": "jfd_02_daria_koval.pdf",
+    "candidate": "Daria Koval",
+    "position": "Junior Frontend Developer",
+    "level": "Junior",
+    "vacancyTitle": "Middle Frontend Developer",
+    "finalMatchScore": 66.67,
+    "neuralMatchScore": 87.23,
+    "ruleBasedMatchScore": 41,
+    "recommendation": "Review manually",
+    "confidence": 0.73,
+    "strengths": [
+      "Нейромережева змістова відповідність: 66.67/100",
+      "Спільні змістові акценти: frontend, developer, ui, ., skills, react, axios",
+      "Збіг основних навичок: 3 з 12"
+    ],
+    "gaps": [
+      "Відсутня основна навичка: REST API",
+      "Відсутня основна навичка: State Management",
+      "Поточний рівень (Junior) нижчий за очікуваний (Middle)"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": -26,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": 5.44,
+      "domainMismatchAdjustment": 0,
+      "weakOverlapAdjustment": 0,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": -20.56
+    },
+    "providerStatus": "ready"
+  },
+  {
+    "fileName": "sfd_02_serhii_kramar.pdf",
+    "candidate": "Serhii Kramar",
+    "position": "Senior Frontend Developer",
+    "level": "Senior",
+    "vacancyTitle": "Senior Frontend Developer",
+    "finalMatchScore": 97.15,
+    "neuralMatchScore": 91.79,
+    "ruleBasedMatchScore": 78,
+    "recommendation": "Proceed",
+    "confidence": 0.73,
+    "strengths": [
+      "Нейромережева змістова відповідність: 97.15/100",
+      "Спільні змістові акценти: senior, frontend, developer, ., skills, react, typescript, performance",
+      "Збіг основних навичок: 7 з 13",
+      "Релевантний досвід: 5.85 р."
+    ],
+    "gaps": [
+      "Відсутня основна навичка: Architecture Design",
+      "Відсутня основна навичка: Code Review"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": 0,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": 5.36,
+      "domainMismatchAdjustment": 0,
+      "weakOverlapAdjustment": 0,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": 5.36
+    },
+    "providerStatus": "ready"
+  },
+  {
+    "fileName": "sfd_02_serhii_kramar.pdf",
+    "candidate": "Serhii Kramar",
+    "position": "Senior Frontend Developer",
+    "level": "Senior",
+    "vacancyTitle": "Middle Frontend Developer",
+    "finalMatchScore": 93.59,
+    "neuralMatchScore": 88.23,
+    "ruleBasedMatchScore": 64,
+    "recommendation": "Proceed",
+    "confidence": 0.73,
+    "strengths": [
+      "Нейромережева змістова відповідність: 93.59/100",
+      "Спільні змістові акценти: frontend, developer, ., skills, react, typescript",
+      "Збіг основних навичок: 2 з 12",
+      "Релевантний досвід: 5.85 р."
+    ],
+    "gaps": [
+      "Відсутня основна навичка: REST API",
+      "Відсутня основна навичка: State Management"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": 0,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": 5.36,
+      "domainMismatchAdjustment": 0,
+      "weakOverlapAdjustment": 0,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": 5.36
+    },
+    "providerStatus": "ready"
+  },
+  {
+    "fileName": "mpbd_02_tetiana_riabokon.pdf",
+    "candidate": "Tetiana Riabokon",
+    "position": "Middle Python Backend Developer",
+    "level": "Senior",
+    "vacancyTitle": "Middle Python Backend Developer",
+    "finalMatchScore": 92.52,
+    "neuralMatchScore": 92.94,
+    "ruleBasedMatchScore": 74,
+    "recommendation": "Proceed",
+    "confidence": 0.73,
+    "strengths": [
+      "Нейромережева змістова відповідність: 92.52/100",
+      "Спільні змістові акценти: middle, python, backend, developer, ., api, skills, django",
+      "Збіг основних навичок: 9 з 12",
+      "Релевантний досвід: 5 р."
+    ],
+    "gaps": [
+      "Відсутня основна навичка: Git",
+      "Відсутня основна навичка: Problem Solving"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": 0,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": -0.42,
+      "domainMismatchAdjustment": 0,
+      "weakOverlapAdjustment": 0,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": -0.42
+    },
+    "providerStatus": "ready"
+  },
+  {
+    "fileName": "jr_02_anastasiia_boyko.pdf",
+    "candidate": "Anastasiia Boyko",
+    "position": "Junior Recruiter",
+    "level": "Junior",
+    "vacancyTitle": "Junior Recruiter",
+    "finalMatchScore": 98.82,
+    "neuralMatchScore": 92.82,
+    "ruleBasedMatchScore": 73,
+    "recommendation": "Proceed",
+    "confidence": 0.72,
+    "strengths": [
+      "Нейромережева змістова відповідність: 98.82/100",
+      "Спільні змістові акценти: junior, recruiter, ., skills, communication, candidate, search, interview",
+      "Збіг основних навичок: 6 з 10",
+      "Релевантний досвід: 1.3 р."
+    ],
+    "gaps": [
+      "Відсутня основна навичка: Attention to Detail",
+      "Відсутня основна навичка: Teamwork"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": 0,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": 6,
+      "domainMismatchAdjustment": 0,
+      "weakOverlapAdjustment": 0,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": 6
+    },
+    "providerStatus": "ready"
+  },
+  {
+    "fileName": "jr_02_anastasiia_boyko.pdf",
+    "candidate": "Anastasiia Boyko",
+    "position": "Junior Recruiter",
+    "level": "Junior",
+    "vacancyTitle": "Junior Frontend Developer",
+    "finalMatchScore": 54.9,
+    "neuralMatchScore": 84.54,
+    "ruleBasedMatchScore": 41,
+    "recommendation": "Review manually",
+    "confidence": 0.72,
+    "strengths": [
+      "Нейромережева змістова відповідність: 54.9/100",
+      "Спільні змістові акценти: junior, ., skills",
+      "Збіг основних навичок: 0 з 10",
+      "Релевантний досвід: 1.3 р."
+    ],
+    "gaps": [
+      "Відсутня основна навичка: HTML",
+      "Відсутня основна навичка: CSS"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": 0,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": -3.64,
+      "domainMismatchAdjustment": -14,
+      "weakOverlapAdjustment": -12,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": -29.64
+    },
+    "providerStatus": "ready"
+  },
+  {
+    "fileName": "jfd_01_ihor_tkachuk.pdf",
+    "candidate": "Ihor Tkachuk",
+    "position": "Junior Frontend Developer",
+    "level": "Junior",
+    "vacancyTitle": "Junior Recruiter",
+    "finalMatchScore": 55.14,
+    "neuralMatchScore": 85.09,
+    "ruleBasedMatchScore": 41,
+    "recommendation": "Review manually",
+    "confidence": 0.72,
+    "strengths": [
+      "Нейромережева змістова відповідність: 55.14/100",
+      "Спільні змістові акценти: junior, ., skills",
+      "Збіг основних навичок: 0 з 10",
+      "Релевантний досвід: 1.3 р."
+    ],
+    "gaps": [
+      "Відсутня основна навичка: Communication",
+      "Відсутня основна навичка: Candidate Search"
+    ],
+    "penaltiesApplied": {
+      "missingCriticalCount": 0,
+      "criticalPenaltyAdjustment": 0,
+      "confidenceAdjustment": 0,
+      "levelMismatchAdjustment": 0,
+      "lowCriticalCoverageAdjustment": 0,
+      "sparseVacancyAdjustment": 0,
+      "roleContextAdjustment": -3.95,
+      "domainMismatchAdjustment": -14,
+      "weakOverlapAdjustment": -12,
+      "severeSemanticMismatchPenalty": 10,
+      "severeSemanticMismatchAdjustment": 0,
+      "total": -29.95
+    },
+    "providerStatus": "ready"
+  }
+]

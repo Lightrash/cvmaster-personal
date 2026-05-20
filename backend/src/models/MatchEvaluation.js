@@ -18,6 +18,9 @@ const matchEvaluationSchema = new mongoose.Schema(
     analysisSnapshot: { type: Object, required: true },
     matchResult: {
       matchPercentage: { type: Number, required: true, min: 0, max: 100 },
+      neuralMatchScore: { type: Number, default: null, min: 0, max: 100 },
+      ruleBasedMatchScore: { type: Number, default: null, min: 0, max: 100 },
+      finalMatchScore: { type: Number, default: null, min: 0, max: 100 },
       strengths: { type: [String], default: [] },
       gaps: { type: [String], default: [] },
       recommendation: { type: String, enum: RECOMMENDATION_VALUES, required: true },
@@ -28,6 +31,11 @@ const matchEvaluationSchema = new mongoose.Schema(
       matchedOptionalSkills: { type: [String], default: [] },
       optionalCoverage: { type: Number, min: 0, max: 1, default: 0 },
       skillMatchBreakdown: { type: [Object], default: [] },
+      neuralBreakdown: { type: Object, default: null },
+      confidence: { type: Object, default: null },
+      roleContext: { type: Object, default: null },
+      penaltiesApplied: { type: Object, default: null },
+      scoringMeta: { type: Object, default: null },
     },
     method: {
       engine: { type: String, enum: ENGINE_VALUES, default: 'deterministic' },

@@ -1,4 +1,4 @@
-import { useDroppable } from '@dnd-kit/core';
+﻿import { useDroppable } from '@dnd-kit/core';
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -90,12 +90,12 @@ export function Column({
             {isEmpty && (
               <div className="flex flex-col items-center justify-center py-10 px-4 border-2 border-dashed border-neutral-200 dark:border-neutral-700 rounded-xl bg-white/50 dark:bg-neutral-800/30">
                 <p className="text-[13px] font-medium text-neutral-400 dark:text-neutral-500 text-center">
-                  No candidate yet
+                  Поки немає кандидатів
                 </p>
                 <p className="text-[11px] text-neutral-300 dark:text-neutral-600 text-center mt-1 leading-relaxed">
-                  Drag and drop between
+                  Перетягуйте картки між
                   <br />
-                  the current stages
+                  доступними етапами
                 </p>
               </div>
             )}

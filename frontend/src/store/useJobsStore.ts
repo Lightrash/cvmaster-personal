@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+﻿import { create } from 'zustand';
 import type { Job } from '@/types';
 import {
   createJob as createJobApi,
@@ -43,7 +43,7 @@ export const useJobsStore = create<JobsState>((set, get) => ({
     } catch (error) {
       set({
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to load jobs',
+        error: error instanceof Error ? error.message : 'Не вдалося завантажити вакансії',
       });
     }
   },
@@ -57,7 +57,7 @@ export const useJobsStore = create<JobsState>((set, get) => ({
       }));
     } catch (error) {
       set({
-        error: error instanceof Error ? error.message : 'Failed to create job',
+        error: error instanceof Error ? error.message : 'Не вдалося створити вакансію',
       });
       throw error;
     }
@@ -72,7 +72,7 @@ export const useJobsStore = create<JobsState>((set, get) => ({
     } catch (error) {
       set({
         jobs: previous,
-        error: error instanceof Error ? error.message : 'Failed to delete job',
+        error: error instanceof Error ? error.message : 'Не вдалося видалити вакансію',
       });
       throw error;
     }
@@ -93,7 +93,7 @@ export const useJobsStore = create<JobsState>((set, get) => ({
     } catch (error) {
       set({
         jobs: previous,
-        error: error instanceof Error ? error.message : 'Failed to update job',
+        error: error instanceof Error ? error.message : 'Не вдалося оновити вакансію',
       });
       throw error;
     }
@@ -123,3 +123,4 @@ export const useJobsStore = create<JobsState>((set, get) => ({
     return filtered;
   },
 }));
+

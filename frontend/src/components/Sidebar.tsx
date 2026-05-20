@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+﻿import { NavLink, useNavigate } from 'react-router-dom';
 import { Briefcase, Users, Settings, LogOut } from 'lucide-react';
 import { useLayoutStore } from '@/store/useLayoutStore';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -9,8 +9,8 @@ export function Sidebar() {
   const logout = useAuthStore((state) => state.logout);
 
   const menuItems = [
-    { id: 'candidates', label: 'Candidates', icon: Users, path: '/candidates' },
-    { id: 'jobs', label: 'Jobs', icon: Briefcase, path: '/jobs' },
+    { id: 'candidates', label: 'Кандидати', icon: Users, path: '/candidates' },
+    { id: 'jobs', label: 'Вакансії', icon: Briefcase, path: '/jobs' },
   ];
 
   const handleLogout = () => {
@@ -39,7 +39,7 @@ export function Sidebar() {
               CVMaster
             </h2>
             <p className="text-[10px] text-neutral-400 dark:text-neutral-500 font-medium mt-1 uppercase tracking-wider">
-              Smart ATS
+              HR CRM
             </p>
           </div>
         )}
@@ -80,7 +80,7 @@ export function Sidebar() {
       <div className="px-3 py-4 border-t border-neutral-100 dark:border-neutral-800 space-y-1">
         <NavLink
           to="/settings"
-          title={isSidebarCollapsed ? 'Settings' : undefined}
+          title={isSidebarCollapsed ? 'Налаштування' : undefined}
           className={({ isActive }) => `
             w-full flex items-center ${isSidebarCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-xl text-[13px] font-medium transition-all
             ${
@@ -91,18 +91,18 @@ export function Sidebar() {
           `}
         >
           <Settings className="w-4 h-4" />
-          {!isSidebarCollapsed && 'Settings'}
+          {!isSidebarCollapsed && 'Налаштування'}
         </NavLink>
 
         <button
           onClick={handleLogout}
-          title={isSidebarCollapsed ? 'Logout' : undefined}
+          title={isSidebarCollapsed ? 'Вийти' : undefined}
           className={`w-full flex items-center ${
             isSidebarCollapsed ? 'justify-center' : 'gap-3'
           } px-3 py-2 rounded-xl text-[13px] font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all cursor-pointer`}
         >
           <LogOut className="w-4 h-4" />
-          {!isSidebarCollapsed && 'Logout'}
+          {!isSidebarCollapsed && 'Вийти'}
         </button>
       </div>
     </aside>

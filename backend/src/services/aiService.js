@@ -3,6 +3,8 @@ const {
   applyDeterministicProfileScoring,
   computeDeterministicMatch,
 } = require('./deterministicScoringService');
+const { computeNeuralMatchScore } = require('./neuralMatchingService');
+const { debugMethodLog } = require('./methodDebugService');
 
 // Набори ключових слів для локальних евристик (mock/fallback).
 const TECH_KEYWORDS = [
@@ -27,7 +29,7 @@ function shouldFallbackOnQuota() {
 }
 
 function shouldUseDeterministicMatch() {
-  // За замовчуванням метод match детермінований і відтворюваний.
+  // LLM mode for match is now used only for optional strengths/gaps explanations.
   return process.env.MATCH_METHOD_MODE !== 'llm';
 }
 
@@ -55,9 +57,9 @@ function isQuotaError(error) {
 function buildQuotaError(error, action) {
   const retrySeconds = parseRetrySeconds(String(error?.message || error || ''));
   const suffix = retrySeconds
-    ? ` Retry after about ${retrySeconds} seconds.`
-    : ' Retry later or enable AI_MOCK=true for local development.';
-  const friendly = `AI quota exceeded while trying to ${action}.${suffix}`;
+    ? ` Повторіть спробу приблизно через ${retrySeconds} с.`
+    : ' Повторіть пізніше або увімкніть AI_MOCK=true для локальної розробки.';
+  const friendly = `Вичерпано ліміт AI під час дії: ${action}.${suffix}`;
   const wrapped = new Error(friendly);
   wrapped.statusCode = 429;
   wrapped.code = 'AI_QUOTA_EXCEEDED';
@@ -171,7 +173,7 @@ function buildMockAnalysis(resumeText) {
     technologies,
     softSkills,
     overallScore: level === 'Senior' ? 8 : level === 'Middle' ? 7 : 6,
-    summary: `Mock analysis for local development. Candidate looks like a ${level} ${inferPosition(resumeText)} with ${years} year(s) of experience.`,
+    summary: `Тестовий аналіз для локальної розробки. Кандидат виглядає як ${level} ${inferPosition(resumeText)} з досвідом близько ${years} р.`,
     education: inferEducation(resumeText),
     languages: inferLanguages(resumeText),
   });
@@ -181,18 +183,27 @@ function buildMockMatch(analysis, job) {
   const deterministic = computeDeterministicMatch(analysis, job);
   return {
     ...deterministic,
-    strengths: unique([...(deterministic.strengths || []), 'Deterministic scoring (mock mode)']).slice(0, 5),
+    strengths: unique([...(deterministic.strengths || []), 'Тестовий режим: використано локальне детерміноване оцінювання']).slice(0, 5),
   };
 }
 
 function getModel() {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not set in backend .env');
+    throw new Error('У backend/.env не задано GEMINI_API_KEY');
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  return genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  return genAI.getGenerativeModel({
+    model: 'gemini-2.5-flash',
+    generationConfig: {
+      temperature: 0,
+      topP: 0.1,
+      topK: 1,
+      candidateCount: 1,
+      responseMimeType: 'application/json',
+    },
+  });
 }
 
 async function callModelAndParse(prompt) {
@@ -214,81 +225,101 @@ async function analyzeResumeText(resumeText) {
     return buildMockAnalysis(resumeText);
   }
 
-  const prompt = `You are an expert HR analyst. Analyze the following resume text and return a JSON object with exactly these fields:
+  const prompt = `Ти досвідчений HR-аналітик. Проаналізуй текст резюме та поверни JSON-об'єкт РІВНО з такими полями:
 {
-  "firstName": "candidate's first name",
-  "lastName": "candidate's last name / surname",
-  "email": "email if found or empty string",
-  "phone": "phone number if found or empty string",
-  "position": "candidate's most likely job title/role",
-  "linkedin": "LinkedIn URL if found or empty string",
-  "skills": ["list of key hard skills found"],
+  "firstName": "ім'я кандидата",
+  "lastName": "прізвище кандидата",
+  "email": "email, якщо знайдено, інакше порожній рядок",
+  "phone": "номер телефону, якщо знайдено, інакше порожній рядок",
+  "position": "найімовірніша поточна або остання посада кандидата",
+  "linkedin": "посилання на LinkedIn, якщо знайдено, інакше порожній рядок",
+  "skills": ["список ключових hard skills"],
   "level": "Junior" | "Middle" | "Senior",
   "yearsOfExperience": number,
-  "technologies": ["list of technologies/tools/frameworks mentioned"],
-  "softSkills": ["list of soft skills if found"],
+  "technologies": ["список технологій, інструментів і фреймворків"],
+  "softSkills": ["список soft skills, якщо знайдено"],
   "overallScore": number between 1 and 10,
-  "summary": "3-5 sentence profile summary in English",
-  "education": "highest education degree and institution if found",
-  "languages": ["list of languages the candidate knows"]
+  "summary": "короткий опис профілю кандидата на 3-5 речень ОБОВ'ЯЗКОВО українською мовою",
+  "education": "найвищий рівень освіти та заклад, якщо знайдено",
+  "languages": ["список мов, якими володіє кандидат"]
 }
 
-Rules:
-- Return ONLY valid JSON, no markdown, no code blocks, no extra text
-- yearsOfExperience should be a number (integer)
-- overallScore should be a number between 1 and 10
-- level should be exactly one of: "Junior", "Middle", "Senior"
-- firstName and lastName MUST be extracted from the resume - these are critical
-- position should be the candidate's current or most recent role
-- If you can't determine something, make your best estimate based on context
-- For empty/unknown string fields use ""
-- For empty/unknown array fields use []
+Правила:
+- Поверни ТІЛЬКИ валідний JSON, без markdown, без code blocks, без зайвого тексту
+- yearsOfExperience має бути числом (integer)
+- overallScore має бути числом від 1 до 10
+- level має бути рівно одним із: "Junior", "Middle", "Senior"
+- firstName і lastName ОБОВ'ЯЗКОВО потрібно витягнути з резюме
+- position має означати поточну або останню роль кандидата
+- Якщо щось неможливо визначити точно, дай найкращу оцінку за контекстом
+- Для порожніх/невідомих рядкових полів використовуй ""
+- Для порожніх/невідомих масивів використовуй []
+- summary має бути природною українською мовою, без англійських речень, якщо це не частина назви технології чи посади
 
-Resume text:
+Текст резюме:
 ${resumeText}`;
 
   try {
     const llmResult = await callModelAndParse(prompt);
     // LLM витягує структуру, але фінальний score/level перераховуємо локально.
-    return applyDeterministicProfileScoring(llmResult);
+    debugMethodLog('resume-analysis.structured', {
+      yearsOfExperience: llmResult?.yearsOfExperience ?? null,
+      level: llmResult?.level ?? null,
+      skills: Array.isArray(llmResult?.skills) ? llmResult.skills : [],
+      technologies: Array.isArray(llmResult?.technologies) ? llmResult.technologies : [],
+      summary: typeof llmResult?.summary === 'string' ? llmResult.summary : '',
+      structuredAnalysis: llmResult,
+    });
+    const scored = applyDeterministicProfileScoring(llmResult);
+    debugMethodLog('resume-analysis.scored', {
+      yearsOfExperience: scored?.yearsOfExperience ?? null,
+      generalYearsExperience: scored?.generalYearsExperience ?? null,
+      relevantYearsExperience: scored?.relevantYearsExperience ?? null,
+      level: scored?.level ?? null,
+      skills: Array.isArray(scored?.skills) ? scored.skills : [],
+      technologies: Array.isArray(scored?.technologies) ? scored.technologies : [],
+      overallScore: scored?.overallScore ?? null,
+    });
+    return scored;
   } catch (error) {
     if (isQuotaError(error) && shouldFallbackOnQuota()) {
       const fallback = buildMockAnalysis(resumeText);
-      fallback.summary = `${fallback.summary} (Fallback mode: AI quota exceeded)`;
+      fallback.summary = `${fallback.summary} (Резервний режим: ліміт AI вичерпано)`;
       return fallback;
     }
     if (isQuotaError(error)) {
-      throw buildQuotaError(error, 'analyze resume');
+      throw buildQuotaError(error, 'проаналізувати резюме');
     }
     throw error;
   }
 }
 
 async function matchResumeToJob(analysis, job) {
-  // Базовий match завжди рахуємо локальною формулою (самостійний метод).
-  const deterministicMatch = computeDeterministicMatch(analysis, job);
+  // Neural-first match: embeddings-based semantic similarity is primary,
+  // deterministic rules stay as bounded validation/penalty/explanation layer.
+  const neuralFirstMatch = await computeNeuralMatchScore(analysis, analysis, job);
   if (shouldUseMock() || shouldUseDeterministicMatch()) {
-    return shouldUseMock() ? buildMockMatch(analysis, job) : deterministicMatch;
+    return neuralFirstMatch;
   }
 
-  const prompt = `You are an expert HR matching system. Compare the candidate's resume analysis with the job requirements and return a JSON object with exactly these fields:
+  const prompt = `Ти система HR-оцінювання відповідності. Порівняй аналіз резюме кандидата з вимогами вакансії та поверни JSON-об'єкт РІВНО з такими полями:
 {
   "matchPercentage": number between 0 and 100,
-  "strengths": ["list of candidate's strong points that match the job"],
-  "gaps": ["list of requirements the candidate doesn't meet"],
+  "strengths": ["список сильних сторін кандидата щодо цієї вакансії, українською"],
+  "gaps": ["список основних прогалин або невідповідностей, українською"],
   "recommendation": "Proceed" | "Review manually" | "Reject"
 }
 
-Rules:
-- Return ONLY valid JSON, no markdown, no code blocks, no extra text
-- matchPercentage should be a realistic number
-- recommendation: "Proceed" if match >= 70%, "Review manually" if 40-69%, "Reject" if < 40%
-- Be specific in strengths and gaps
+Правила:
+- Поверни ТІЛЬКИ валідний JSON, без markdown, без code blocks, без зайвого тексту
+- matchPercentage має бути реалістичним числом
+- recommendation: "Proceed" якщо match >= 70%, "Review manually" якщо 40-69%, "Reject" якщо < 40%
+- strengths і gaps мають бути конкретними та ОБОВ'ЯЗКОВО українською мовою
 
-Candidate Analysis:
+Аналіз кандидата:
 ${JSON.stringify(analysis, null, 2)}
 
-Job Details:
+Дані вакансії:
 Title: ${job.title}
 Department: ${job.department}
 Description: ${job.description || 'N/A'}
@@ -298,29 +329,29 @@ Tech Stack: ${(job.stack || []).join(', ') || 'N/A'}`;
   try {
     const llmMatch = await callModelAndParse(prompt);
     // Якщо увімкнено LLM-режим, беремо від LLM лише текстові пояснення (strengths/gaps).
-    // Підсумкові matchPercentage/recommendation залишаються детермінованими.
+    // Підсумкові numeric scores залишаються neural-first.
     return {
-      ...deterministicMatch,
+      ...neuralFirstMatch,
       strengths: Array.isArray(llmMatch?.strengths) && llmMatch.strengths.length
         ? llmMatch.strengths.slice(0, 5).map((x) => String(x))
-        : deterministicMatch.strengths,
+        : neuralFirstMatch.strengths,
       gaps: Array.isArray(llmMatch?.gaps) && llmMatch.gaps.length
         ? llmMatch.gaps.slice(0, 5).map((x) => String(x))
-        : deterministicMatch.gaps,
+        : neuralFirstMatch.gaps,
     };
   } catch (error) {
     if (isQuotaError(error) && shouldFallbackOnQuota()) {
       const fallback = {
-        ...deterministicMatch,
+        ...neuralFirstMatch,
       };
       fallback.strengths = [
         ...(fallback.strengths || []),
-        'Fallback mode: AI quota exceeded',
+        'Резервний режим: ліміт AI вичерпано',
       ].slice(0, 5);
       return fallback;
     }
     if (isQuotaError(error)) {
-      throw buildQuotaError(error, 'match candidate with vacancy');
+      throw buildQuotaError(error, 'оцінити відповідність кандидата вакансії');
     }
     throw error;
   }

@@ -7,6 +7,7 @@ const {
   analyzeResumeText,
   matchResumeToJob,
 } = require("../services/aiService");
+const { debugMethodLog, fingerprintText } = require("../services/methodDebugService");
 
 const router = express.Router();
 
@@ -93,6 +94,11 @@ router.post("/analyze-resume", upload.single("resume"), async (req, res) => {
     }
 
     const trimmedText = resumeText.substring(0, 15000);
+    debugMethodLog("resume-analysis.raw-text", {
+      rawTextLength: resumeText.length,
+      trimmedTextLength: trimmedText.length,
+      trimmedTextFingerprint: fingerprintText(trimmedText),
+    });
     const analysis = await analyzeResumeText(trimmedText);
     return res.json(analysis);
   } catch (error) {

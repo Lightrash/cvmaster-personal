@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -22,10 +22,9 @@ import {
   Save,
   Sparkles,
   Target,
-  CheckCircle2,
-  AlertCircle,
-  XCircle,
 } from 'lucide-react';
+import { MatchResultPanel } from '@/components/match/MatchResultPanel';
+import { translateCandidateLevel, translateDepartment, translatePipelineStage } from '@/lib/uiText';
 
 interface CandidateDrawerProps {
   candidate: Candidate | null;
@@ -51,6 +50,7 @@ const EMPTY_ANALYSIS: ResumeAnalysis = {
   summary: '',
   education: '',
   languages: [],
+  scoringMeta: undefined,
 };
 
 function normalizeAnalysis(value: unknown): ResumeAnalysis {
@@ -83,6 +83,9 @@ function normalizeAnalysis(value: unknown): ResumeAnalysis {
     summary: String(src.summary || ''),
     education: String(src.education || ''),
     languages: Array.isArray(src.languages) ? src.languages.map(String) : [],
+    scoringMeta: src.scoringMeta && typeof src.scoringMeta === 'object'
+      ? src.scoringMeta as Record<string, unknown>
+      : undefined,
   };
 }
 
@@ -151,7 +154,7 @@ export function CandidateDrawer({ candidate, onClose, onSaved }: CandidateDrawer
   const handleSave = async () => {
     if (!candidate?.id) return;
     if (!name.trim() || !surname.trim()) {
-      setSaveError('First name and last name are required');
+      setSaveError("Ім'я та прізвище є обов'язковими");
       return;
     }
 
@@ -176,7 +179,7 @@ export function CandidateDrawer({ candidate, onClose, onSaved }: CandidateDrawer
 
       onSaved(updated);
     } catch (error: any) {
-      setSaveError(error?.message || 'Failed to save candidate');
+      setSaveError(error?.message || 'Не вдалося зберегти кандидата');
     } finally {
       setIsSaving(false);
     }
@@ -193,7 +196,7 @@ export function CandidateDrawer({ candidate, onClose, onSaved }: CandidateDrawer
       const result = await matchCandidateToJob(analysis, job);
       setMatchResult(result);
     } catch (error: any) {
-      setMatchError(error?.message || 'Failed to match candidate');
+      setMatchError(error?.message || 'Не вдалося оцінити кандидата');
     } finally {
       setIsMatching(false);
     }
@@ -209,58 +212,58 @@ export function CandidateDrawer({ candidate, onClose, onSaved }: CandidateDrawer
           <div className="px-6 py-4 border-b border-neutral-100 dark:border-neutral-800 bg-gradient-to-r from-blue-50/70 to-cyan-50/70 dark:from-blue-950/30 dark:to-cyan-950/30">
             <DialogHeader>
               <DialogTitle className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
-                Candidate Profile
+                Профіль кандидата
               </DialogTitle>
             </DialogHeader>
             <p className="text-[12px] text-neutral-600 dark:text-neutral-300 mt-1">
-              Edit profile, update pipeline stage and run quick match.
+              Редагуйте профіль, змінюйте етап воронки та запускайте швидке оцінювання.
             </p>
           </div>
 
           <div className="flex-1 overflow-auto px-6 py-5 space-y-5">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-[11px] font-medium text-neutral-500">First name *</label>
+                <label className="text-[11px] font-medium text-neutral-500">Ім'я *</label>
                 <Input value={name} onChange={(e) => setName(e.target.value)} className="h-9 mt-1" />
               </div>
               <div>
-                <label className="text-[11px] font-medium text-neutral-500">Last name *</label>
+                <label className="text-[11px] font-medium text-neutral-500">Прізвище *</label>
                 <Input value={surname} onChange={(e) => setSurname(e.target.value)} className="h-9 mt-1" />
               </div>
               <div>
-                <label className="text-[11px] font-medium text-neutral-500">Email</label>
+                <label className="text-[11px] font-medium text-neutral-500">Електронна пошта</label>
                 <Input value={email} onChange={(e) => setEmail(e.target.value)} className="h-9 mt-1" />
               </div>
               <div>
-                <label className="text-[11px] font-medium text-neutral-500">Phone</label>
+                <label className="text-[11px] font-medium text-neutral-500">Телефон</label>
                 <Input value={phone} onChange={(e) => setPhone(e.target.value)} className="h-9 mt-1" />
               </div>
               <div>
-                <label className="text-[11px] font-medium text-neutral-500">Vacancy</label>
+                <label className="text-[11px] font-medium text-neutral-500">Вакансія</label>
                 <Select value={vacancyId || '__none__'} onValueChange={(value) => setVacancyId(value === '__none__' ? '' : value)}>
                   <SelectTrigger className="h-9 mt-1">
-                    <SelectValue placeholder="Select vacancy..." />
+                    <SelectValue placeholder="Оберіть вакансію..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="__none__">No vacancy</SelectItem>
+                    <SelectItem value="__none__">Без вакансії</SelectItem>
                     {activeJobs.map((job) => (
                       <SelectItem key={job.id} value={job.id}>
-                        {job.title} - {job.department}
+                        {job.title} - {translateDepartment(job.department)}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <label className="text-[11px] font-medium text-neutral-500">Position</label>
+                <label className="text-[11px] font-medium text-neutral-500">Посада</label>
                 <Input value={position} onChange={(e) => setPosition(e.target.value)} className="h-9 mt-1" />
               </div>
               <div>
-                <label className="text-[11px] font-medium text-neutral-500">Owner ID</label>
+                <label className="text-[11px] font-medium text-neutral-500">ID відповідального</label>
                 <Input value={ownerId} onChange={(e) => setOwnerId(e.target.value)} className="h-9 mt-1" />
               </div>
               <div>
-                <label className="text-[11px] font-medium text-neutral-500">Next action date</label>
+                <label className="text-[11px] font-medium text-neutral-500">Дата наступної дії</label>
                 <Input
                   type="date"
                   value={nextActionAt}
@@ -269,7 +272,7 @@ export function CandidateDrawer({ candidate, onClose, onSaved }: CandidateDrawer
                 />
               </div>
               <div>
-                <label className="text-[11px] font-medium text-neutral-500">Pipeline stage</label>
+                <label className="text-[11px] font-medium text-neutral-500">Етап воронки</label>
                 <Select value={status} onValueChange={(v) => setStatus(v as ColumnStatus)}>
                   <SelectTrigger className="h-9 mt-1">
                     <SelectValue />
@@ -277,7 +280,7 @@ export function CandidateDrawer({ candidate, onClose, onSaved }: CandidateDrawer
                   <SelectContent>
                     {['New', 'Screening', 'Interview', 'Test Task', 'Offer', 'Hired'].map((nextStatus) => (
                       <SelectItem key={nextStatus} value={nextStatus}>
-                        {nextStatus}
+                        {translatePipelineStage(nextStatus as ColumnStatus)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -292,15 +295,15 @@ export function CandidateDrawer({ candidate, onClose, onSaved }: CandidateDrawer
 
             <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-3">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500 mb-2">
-                AI Summary
+                Підсумок аналізу
               </p>
               <p className="text-[12px] text-neutral-700 dark:text-neutral-300">
-                {analysis.summary || 'No AI summary saved.'}
+                {analysis.summary || 'Збереженого підсумку аналізу ще немає.'}
               </p>
               <div className="mt-2 text-[12px] text-neutral-600 dark:text-neutral-400">
-                Score: <span className="font-semibold">{analysis.overallScore}/10</span>
+                Оцінка: <span className="font-semibold">{analysis.overallScore}/10</span>
                 {' | '}
-                Level: <span className="font-semibold">{analysis.level}</span>
+                Рівень: <span className="font-semibold">{translateCandidateLevel(analysis.level)}</span>
               </div>
             </div>
 
@@ -308,23 +311,23 @@ export function CandidateDrawer({ candidate, onClose, onSaved }: CandidateDrawer
               <div className="flex items-center gap-2">
                 <Target className="w-3.5 h-3.5 text-blue-500" />
                 <p className="text-[12px] font-semibold text-neutral-700 dark:text-neutral-200">
-                  Quick Match
+                  Швидке оцінювання
                 </p>
               </div>
 
               {!hasAnalysis && (
-                <p className="text-[12px] text-neutral-500">No AI analysis saved for this candidate.</p>
+                <p className="text-[12px] text-neutral-500">Для цього кандидата ще немає збереженого AI-аналізу.</p>
               )}
 
               <div className="flex gap-2">
                 <Select value={selectedJobId} onValueChange={setSelectedJobId}>
                   <SelectTrigger className="h-9 flex-1">
-                    <SelectValue placeholder="Select vacancy..." />
+                    <SelectValue placeholder="Оберіть вакансію..." />
                   </SelectTrigger>
                   <SelectContent>
                     {activeJobs.map((job) => (
                       <SelectItem key={job.id} value={job.id}>
-                        {job.title} - {job.department}
+                        {job.title} - {translateDepartment(job.department)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -341,17 +344,7 @@ export function CandidateDrawer({ candidate, onClose, onSaved }: CandidateDrawer
 
               {matchError && <p className="text-[12px] text-red-500">{matchError}</p>}
 
-              {matchResult && (
-                <div className="rounded-lg bg-neutral-50 dark:bg-neutral-800 p-2">
-                  <div className="flex items-center gap-2 text-[12px]">
-                    <span className="font-semibold">{matchResult.matchPercentage}%</span>
-                    {matchResult.recommendation === 'Proceed' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />}
-                    {matchResult.recommendation === 'Review manually' && <AlertCircle className="w-3.5 h-3.5 text-amber-500" />}
-                    {matchResult.recommendation === 'Reject' && <XCircle className="w-3.5 h-3.5 text-red-500" />}
-                    <span>{matchResult.recommendation}</span>
-                  </div>
-                </div>
-              )}
+              {matchResult && <MatchResultPanel matchResult={matchResult} compact />}
             </div>
 
             {saveError && <p className="text-[12px] text-red-500">{saveError}</p>}
@@ -359,11 +352,11 @@ export function CandidateDrawer({ candidate, onClose, onSaved }: CandidateDrawer
 
           <div className="px-6 py-4 border-t border-neutral-100 dark:border-neutral-800 flex justify-end gap-2">
             <Button variant="ghost" onClick={onClose}>
-              Close
+              Закрити
             </Button>
             <Button onClick={handleSave} disabled={isSaving} className="gap-1.5">
               {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              Save changes
+              Зберегти зміни
             </Button>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+﻿import { create } from 'zustand';
 import type { Candidate, ColumnStatus } from '@/types';
 import { createCandidate, fetchCandidates, updateCandidateStatus } from '@/services/api';
 
@@ -42,7 +42,7 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     } catch (error) {
       set({
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to load candidates',
+        error: error instanceof Error ? error.message : 'Не вдалося завантажити кандидатів',
       });
     }
   },
@@ -56,7 +56,7 @@ export const useBoardStore = create<BoardState>((set, get) => ({
       }));
     } catch (error) {
       set({
-        error: error instanceof Error ? error.message : 'Failed to create candidate',
+        error: error instanceof Error ? error.message : 'Не вдалося створити кандидата',
       });
       throw error;
     }
@@ -80,7 +80,7 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     } catch (error) {
       set({
         candidates: previous,
-        error: error instanceof Error ? error.message : 'Failed to update candidate status',
+        error: error instanceof Error ? error.message : 'Не вдалося оновити статус кандидата',
       });
       throw error;
     }
@@ -144,3 +144,4 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     return result;
   },
 }));
+

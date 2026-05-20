@@ -1,4 +1,4 @@
-import { PanelLeft, Sun, Moon } from 'lucide-react';
+﻿import { PanelLeft, Sun, Moon } from 'lucide-react';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useLayoutStore } from '@/store/useLayoutStore';
 
@@ -21,8 +21,8 @@ export function PageHeader({ title, subtitle, icon, backButton, actions }: PageH
           <button
             onClick={toggleSidebar}
             className="p-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-300 cursor-pointer"
-            title={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={isSidebarCollapsed ? 'Розгорнути бокову панель' : 'Згорнути бокову панель'}
+            aria-label={isSidebarCollapsed ? 'Розгорнути бокову панель' : 'Згорнути бокову панель'}
           >
             <PanelLeft className="w-4 h-4 text-neutral-600 dark:text-neutral-300" />
           </button>
@@ -45,7 +45,7 @@ export function PageHeader({ title, subtitle, icon, backButton, actions }: PageH
           <button
             onClick={toggleTheme}
             className="relative p-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-300 cursor-pointer group"
-            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+            title={`Перемкнути на ${theme === 'light' ? 'темну' : 'світлу'} тему`}
           >
             <div className="relative w-4 h-4">
               <Sun

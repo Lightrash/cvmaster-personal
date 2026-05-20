@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Dialog,
@@ -21,7 +21,17 @@ import {
 import { analyzeResume } from '@/services/api';
 import { useNavStore } from '@/store/useNavStore';
 
-export function AddCandidateModal() {
+interface AddCandidateModalProps {
+  disabled?: boolean;
+  vacancyId?: string | null;
+  vacancyTitle?: string | null;
+}
+
+export function AddCandidateModal({
+  disabled = false,
+  vacancyId = null,
+  vacancyTitle = null,
+}: AddCandidateModalProps) {
   const navigate = useNavigate();
   const setPendingCandidate = useNavStore((s) => s.setPendingCandidate);
 
@@ -52,7 +62,7 @@ export function AddCandidateModal() {
       setError('');
       return;
     }
-    setError('Only PDF/DOCX up to 25MB');
+    setError('Дозволені лише файли PDF/DOCX/DOC до 25 МБ');
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,7 +81,7 @@ export function AddCandidateModal() {
   };
 
   const handleAnalyze = async () => {
-    if (!file) return;
+    if (!file || !vacancyId) return;
 
     setIsAnalyzing(true);
     setError('');
@@ -80,9 +90,9 @@ export function AddCandidateModal() {
       const analysis = await analyzeResume(file);
       setPendingCandidate(analysis, file);
       setOpen(false);
-      navigate('/candidate/new');
+      navigate(`/candidate/new?vacancyId=${encodeURIComponent(vacancyId)}`);
     } catch (err: any) {
-      setError(err.message || 'Failed to analyze resume');
+      setError(err.message || 'Не вдалося проаналізувати резюме');
     } finally {
       setIsAnalyzing(false);
     }
@@ -108,10 +118,12 @@ export function AddCandidateModal() {
         <Button
           variant="outline"
           size="sm"
+          disabled={disabled}
           className="gap-1.5 border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg font-medium text-[13px] h-9 cursor-pointer transition-all"
+          title={disabled ? 'Спочатку виберіть вакансію, щоб додати кандидата.' : undefined}
         >
           <Plus className="w-3.5 h-3.5" />
-          Add Candidate
+          Додати кандидата
         </Button>
       </DialogTrigger>
 
@@ -119,10 +131,12 @@ export function AddCandidateModal() {
         <div className="bg-gradient-to-br from-blue-50/80 to-indigo-50/80 dark:from-blue-950/40 dark:to-indigo-950/40 px-6 pt-5 pb-4">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
-              Upload CV
+              Завантаження резюме
             </DialogTitle>
             <p className="text-[13px] text-neutral-500 dark:text-neutral-400 mt-1 font-medium">
-              Upload a resume, run AI analysis, then continue to candidate review page.
+              {vacancyTitle
+                ? `Завантажте резюме для вакансії ${vacancyTitle}, запустіть аналіз і перейдіть до перевірки кандидата.`
+                : 'Завантажте резюме, запустіть аналіз і перейдіть до сторінки перевірки кандидата.'}
             </p>
           </DialogHeader>
         </div>
@@ -156,11 +170,11 @@ export function AddCandidateModal() {
                 />
               </div>
               <p className="text-[13px] text-neutral-600 dark:text-neutral-300 text-center">
-                <span className="font-semibold text-blue-600 dark:text-blue-400">Drag-and-drop</span> or{' '}
-                <span className="font-semibold text-blue-600 dark:text-blue-400">click</span> to upload
+                <span className="font-semibold text-blue-600 dark:text-blue-400">Перетягніть файл</span> або{' '}
+                <span className="font-semibold text-blue-600 dark:text-blue-400">натисніть</span>, щоб завантажити
               </p>
               <p className="text-[11px] text-neutral-400 dark:text-neutral-500 mt-1.5">
-                Max 25MB - .pdf, .docx, .doc
+                Максимум 25 МБ - .pdf, .docx, .doc
               </p>
             </div>
           )}
@@ -180,7 +194,7 @@ export function AddCandidateModal() {
                 <p className="text-[13px] font-medium text-neutral-800 dark:text-neutral-200 truncate">
                   {file.name}
                 </p>
-                <p className="text-[11px] text-neutral-400">{(file.size / 1024 / 1024).toFixed(1)} MB</p>
+                <p className="text-[11px] text-neutral-400">{(file.size / 1024 / 1024).toFixed(1)} МБ</p>
               </div>
               <button
                 onClick={() => setFile(null)}
@@ -202,24 +216,24 @@ export function AddCandidateModal() {
               className="rounded-lg text-[13px] cursor-pointer font-medium"
               disabled={isAnalyzing}
             >
-              Cancel
+              Скасувати
             </Button>
 
             <Button
               size="sm"
               onClick={handleAnalyze}
-              disabled={!file || isAnalyzing}
+              disabled={!file || isAnalyzing || !vacancyId}
               className="rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-5 text-[13px] cursor-pointer font-medium gap-1.5 disabled:opacity-50"
             >
               {isAnalyzing ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  Analyzing...
+                  Аналізуємо...
                 </>
               ) : (
                 <>
                   <Sparkles className="w-3.5 h-3.5" />
-                  Analyze with AI
+                  Проаналізувати
                 </>
               )}
             </Button>
@@ -229,3 +243,4 @@ export function AddCandidateModal() {
     </Dialog>
   );
 }
+

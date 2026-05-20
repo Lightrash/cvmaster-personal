@@ -59,12 +59,19 @@ function parseDate(value) {
 
 // Формує метадані методу для збереження в MatchEvaluation.
 // Якщо клієнт не передав версії, беремо активну версію з method-config.
-function normalizeMethod(method = {}) {
+function normalizeMethod(method = {}, matchResult = null) {
   const rawEngine = sanitizeText(method.engine).toLowerCase();
-  const fallbackEngine = process.env.AI_MOCK === 'true' ? 'mock' : 'deterministic';
+  const fallbackEngine = process.env.AI_MOCK === 'true'
+    ? 'mock'
+    : matchResult?.neuralMatchScore != null
+      ? 'embedding'
+      : 'deterministic';
   const engine = ENGINE_VALUES.includes(rawEngine) ? rawEngine : fallbackEngine;
-  const providerDefault = engine === 'deterministic' ? 'local' : 'google';
-  const modelDefault = engine === 'deterministic' ? METHOD_CONFIG.version : 'gemini-2.5-flash';
+  const providerDefault = sanitizeText(matchResult?.scoringMeta?.provider, engine === 'deterministic' ? 'local' : 'google');
+  const modelDefault = sanitizeText(
+    matchResult?.scoringMeta?.embeddingModel,
+    engine === 'deterministic' ? METHOD_CONFIG.version : 'gemini-embedding-001'
+  );
   const promptDefault = engine === 'deterministic' ? 'n/a' : 'v1';
 
   return {
@@ -72,17 +79,22 @@ function normalizeMethod(method = {}) {
     provider: sanitizeText(method.provider, providerDefault),
     modelVersion: sanitizeText(method.modelVersion, modelDefault),
     promptVersion: sanitizeText(method.promptVersion, promptDefault),
-    pipelineVersion: sanitizeText(method.pipelineVersion, METHOD_CONFIG.version),
+    pipelineVersion: sanitizeText(method.pipelineVersion, sanitizeText(matchResult?.scoringMeta?.method, METHOD_CONFIG.version)),
   };
 }
 
 // Гарантує, що результат match має коректні типи й межі.
 function normalizeMatchResult(matchResult = {}) {
-  const rawScore = Number(matchResult.matchPercentage);
-  const score = Number.isFinite(rawScore) ? Math.max(0, Math.min(100, rawScore)) : 0;
+  const rawFinalScore = Number(matchResult.finalMatchScore ?? matchResult.matchPercentage);
+  const score = Number.isFinite(rawFinalScore) ? Math.max(0, Math.min(100, rawFinalScore)) : 0;
+  const rawNeuralScore = Number(matchResult.neuralMatchScore);
+  const rawRuleBasedScore = Number(matchResult.ruleBasedMatchScore);
   const optionalCoverage = Number(matchResult.optionalCoverage);
   return {
     matchPercentage: score,
+    neuralMatchScore: Number.isFinite(rawNeuralScore) ? Math.max(0, Math.min(100, rawNeuralScore)) : null,
+    ruleBasedMatchScore: Number.isFinite(rawRuleBasedScore) ? Math.max(0, Math.min(100, rawRuleBasedScore)) : null,
+    finalMatchScore: score,
     strengths: Array.isArray(matchResult.strengths) ? matchResult.strengths.map((x) => String(x)) : [],
     gaps: Array.isArray(matchResult.gaps) ? matchResult.gaps.map((x) => String(x)) : [],
     recommendation: normalizeRecommendation(matchResult.recommendation, score),
@@ -109,8 +121,29 @@ function normalizeMatchResult(matchResult = {}) {
           matchedSkill: item?.matchedSkill == null ? null : String(item.matchedSkill),
           tier: String(item?.tier || 'none'),
           score: Number.isFinite(Number(item?.score)) ? Math.max(0, Math.min(1, Number(item.score))) : 0,
+          matchSource: String(item?.matchSource || 'none'),
+          requiredCanonical: item?.requiredCanonical == null ? null : String(item.requiredCanonical),
+          matchedCanonical: item?.matchedCanonical == null ? null : String(item.matchedCanonical),
+          matchedTierScore: Number.isFinite(Number(item?.matchedTierScore))
+            ? Math.max(0, Math.min(1, Number(item.matchedTierScore)))
+            : 0,
         }))
       : [],
+    neuralBreakdown: matchResult.neuralBreakdown && typeof matchResult.neuralBreakdown === 'object'
+      ? matchResult.neuralBreakdown
+      : matchResult.scoringMeta?.neuralBreakdown || null,
+    confidence: matchResult.confidence && typeof matchResult.confidence === 'object'
+      ? matchResult.confidence
+      : matchResult.scoringMeta?.confidence || null,
+    roleContext: matchResult.roleContext && typeof matchResult.roleContext === 'object'
+      ? matchResult.roleContext
+      : matchResult.scoringMeta?.roleContext || null,
+    penaltiesApplied: matchResult.penaltiesApplied && typeof matchResult.penaltiesApplied === 'object'
+      ? matchResult.penaltiesApplied
+      : matchResult.scoringMeta?.penaltiesApplied || null,
+    scoringMeta: matchResult.scoringMeta && typeof matchResult.scoringMeta === 'object'
+      ? matchResult.scoringMeta
+      : null,
   };
 }
 
@@ -260,7 +293,7 @@ router.post('/', async (req, res) => {
     });
     const matchResult = normalizeMatchResult(rawMatch);
 
-    const method = normalizeMethod(req.body?.method || {});
+    const method = normalizeMethod(req.body?.method || {}, rawMatch);
     const saveRecord = sanitizeBoolean(req.body?.saveRecord, true);
 
     const basePayload = {

@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+﻿import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   DndContext,
   DragOverlay,
@@ -39,18 +40,18 @@ import { useThemeStore } from '@/store/useThemeStore';
 import { useLayoutStore } from '@/store/useLayoutStore';
 import { Search, LayoutGrid, Sun, Moon, PanelLeft, Trash2 } from 'lucide-react';
 import type { Candidate, ColumnStatus } from '@/types';
+import { translateDepartment } from '@/lib/uiText';
 
 const columns: { id: ColumnStatus; title: string; dotColor: string }[] = [
-  { id: 'New', title: 'New', dotColor: 'green' },
-  { id: 'Screening', title: 'Screening', dotColor: 'blue' },
-  { id: 'Interview', title: 'Interview', dotColor: 'pink' },
-  { id: 'Test Task', title: 'Test Task', dotColor: 'orange' },
-  { id: 'Offer', title: 'Offer', dotColor: 'purple' },
-  { id: 'Hired', title: 'Hired', dotColor: 'emerald' },
+  { id: 'New', title: 'Новий', dotColor: 'green' },
+  { id: 'Screening', title: 'Первинний відбір', dotColor: 'blue' },
+  { id: 'Interview', title: 'Співбесіда', dotColor: 'pink' },
+  { id: 'Test Task', title: 'Тестове завдання', dotColor: 'orange' },
+  { id: 'Offer', title: 'Офер', dotColor: 'purple' },
+  { id: 'Hired', title: 'Найнято', dotColor: 'emerald' },
 ];
 
 const REJECT_DROP_ID = 'reject-dropzone';
-
 const columnIndex = new Map<ColumnStatus, number>(columns.map((c, i) => [c.id, i]));
 
 function isMoveAllowed(from: ColumnStatus, to: ColumnStatus): boolean {
@@ -96,7 +97,7 @@ function RejectDropZone({ isActive }: { isActive: boolean }) {
       >
         <Trash2 className="w-4 h-4" />
         <span className="text-sm font-semibold">
-          {isOver ? 'Release to reject candidate' : 'Drop here to reject'}
+          {isOver ? 'Відпустіть, щоб відхилити кандидата' : 'Перетягніть сюди, щоб відхилити'}
         </span>
       </div>
     </div>
@@ -104,6 +105,8 @@ function RejectDropZone({ isActive }: { isActive: boolean }) {
 }
 
 export function Board() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const {
     searchQuery,
     setSearchQuery,
@@ -138,6 +141,7 @@ export function Board() {
   const [isRestoringId, setIsRestoringId] = useState<string | null>(null);
   const [trashError, setTrashError] = useState('');
   const kanbanRef = useRef<HTMLDivElement>(null);
+
   const jobOptions = useMemo(() => jobs.map((job) => ({ id: job.id, title: job.title, department: job.department })), [jobs]);
   const legacyPositionOptions = useMemo(() => {
     const linkedTitles = new Set(jobs.map((job) => job.title));
@@ -150,39 +154,45 @@ export function Board() {
       )
     ).sort((a, b) => a.localeCompare(b));
   }, [candidates, jobs]);
-  const selectedJobInfo = useMemo(
-    () => {
-      const parsed = parseSelectedJobValue(selectedJob);
-      if (!parsed) return null;
-      return jobs.find((job) => job.id === parsed.vacancyId) || null;
-    },
-    [jobs, selectedJob]
-  );
-  const selectedJobCandidatesCount = useMemo(
-    () => {
-      if (selectedJob === 'all') return candidates.length;
 
-      const parsed = parseSelectedJobValue(selectedJob);
-      if (parsed) {
-        return candidates.filter(
-          (candidate) =>
-            candidate.vacancyId === parsed.vacancyId ||
-            (!candidate.vacancyId && candidate.position === parsed.title)
-        ).length;
-      }
+  const selectedJobInfo = useMemo(() => {
+    const parsed = parseSelectedJobValue(selectedJob);
+    if (!parsed) return null;
+    return jobs.find((job) => job.id === parsed.vacancyId) || null;
+  }, [jobs, selectedJob]);
 
-      if (selectedJob.startsWith('legacy:')) {
-        const legacyPosition = selectedJob.slice('legacy:'.length);
-        return candidates.filter((candidate) => !candidate.vacancyId && candidate.position === legacyPosition).length;
-      }
+  const selectedVacancyContext = useMemo(() => parseSelectedJobValue(selectedJob), [selectedJob]);
+  const isVacancyScopedView = Boolean(selectedVacancyContext);
+  const isAllVacanciesView = selectedJob === 'all';
+  const isLegacyView = !isAllVacanciesView && !isVacancyScopedView;
 
+  const selectedJobCandidatesCount = useMemo(() => {
+    if (selectedJob === 'all') return candidates.length;
+
+    const parsed = parseSelectedJobValue(selectedJob);
+    if (parsed) {
       return candidates.filter(
         (candidate) =>
-          candidate.vacancyId === selectedJob ||
-          (!candidate.vacancyId && selectedJobInfo?.title && candidate.position === selectedJobInfo.title)
+          candidate.vacancyId === parsed.vacancyId ||
+          (!candidate.vacancyId && candidate.position === parsed.title)
       ).length;
-    },
-    [candidates, selectedJob, selectedJobInfo]
+    }
+
+    if (selectedJob.startsWith('legacy:')) {
+      const legacyPosition = selectedJob.slice('legacy:'.length);
+      return candidates.filter((candidate) => !candidate.vacancyId && candidate.position === legacyPosition).length;
+    }
+
+    return candidates.filter(
+      (candidate) =>
+        candidate.vacancyId === selectedJob ||
+        (!candidate.vacancyId && selectedJobInfo?.title && candidate.position === selectedJobInfo.title)
+    ).length;
+  }, [candidates, selectedJob, selectedJobInfo]);
+
+  const getVisibleCandidatesByStatus = useCallback(
+    (status: ColumnStatus) => getCandidatesByStatus(status),
+    [getCandidatesByStatus]
   );
 
   useEffect(() => {
@@ -197,6 +207,13 @@ export function Board() {
     }
   }, [jobsLoaded, loadJobs]);
 
+  useEffect(() => {
+    const navigationState = location.state as { selectedJob?: string } | null;
+    if (!navigationState?.selectedJob) return;
+    setSelectedJob(navigationState.selectedJob);
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.key, location.pathname, location.state, navigate, setSelectedJob]);
+
   const loadTrash = useCallback(async () => {
     setIsTrashLoading(true);
     setTrashError('');
@@ -205,7 +222,7 @@ export function Board() {
       setTrashCandidates(result.items || []);
       setTrashRetentionDays(result.retentionDays || 60);
     } catch (nextError) {
-      setTrashError(nextError instanceof Error ? nextError.message : 'Failed to load trash');
+      setTrashError(nextError instanceof Error ? nextError.message : 'Не вдалося завантажити кошик');
     } finally {
       setIsTrashLoading(false);
     }
@@ -269,11 +286,9 @@ export function Board() {
   const findColumnForOver = useCallback(
     (overId: string | number): ColumnStatus | null => {
       const id = String(overId);
-
       if (columnIndex.has(id as ColumnStatus)) {
         return id as ColumnStatus;
       }
-
       const cand = candidates.find((c) => c.id === id);
       return cand ? cand.status : null;
     },
@@ -378,7 +393,7 @@ export function Board() {
       await restoreCandidateFromTrash(candidateId, 'New');
       await Promise.all([loadCandidates(), loadTrash()]);
     } catch (nextError) {
-      setTrashError(nextError instanceof Error ? nextError.message : 'Failed to restore candidate');
+      setTrashError(nextError instanceof Error ? nextError.message : 'Не вдалося відновити кандидата');
     } finally {
       setIsRestoringId(null);
     }
@@ -392,8 +407,8 @@ export function Board() {
             <button
               onClick={toggleSidebar}
               className="p-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-300 cursor-pointer"
-              title={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              title={isSidebarCollapsed ? 'Розгорнути бокову панель' : 'Згорнути бокову панель'}
+              aria-label={isSidebarCollapsed ? 'Розгорнути бокову панель' : 'Згорнути бокову панель'}
             >
               <PanelLeft className="w-4 h-4 text-neutral-600 dark:text-neutral-300" />
             </button>
@@ -401,60 +416,37 @@ export function Board() {
             <div className="p-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800">
               <LayoutGrid className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
             </div>
-            <h1 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">Board</h1>
+            <h1 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">Воронка</h1>
           </div>
 
           <button
             onClick={toggleTheme}
             className="relative p-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-300 cursor-pointer"
           >
-            <Sun
-              className={`w-4 h-4 text-amber-500 transition-all duration-300 ${
-                theme === 'light' ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 rotate-90 scale-0'
-              } absolute top-2 left-2`}
-            />
-            <Moon
-              className={`w-4 h-4 text-blue-400 transition-all duration-300 ${
-                theme === 'dark' ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-0'
-              }`}
-            />
+            <Sun className={`w-4 h-4 text-amber-500 transition-all duration-300 ${theme === 'light' ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 rotate-90 scale-0'} absolute top-2 left-2`} />
+            <Moon className={`w-4 h-4 text-blue-400 transition-all duration-300 ${theme === 'dark' ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-0'}`} />
           </button>
         </div>
 
         <div className="flex items-center justify-between mt-4 gap-4">
           <div className="relative flex-1 max-w-xs">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 dark:text-neutral-500" />
-            <Input
-              placeholder="Search candidates..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-9 rounded-lg"
-            />
+            <Input placeholder="Пошук кандидатів..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 h-9 rounded-lg" />
           </div>
 
           <div className="flex items-center gap-2.5">
-            <AddCandidateModal />
+            <AddCandidateModal disabled={!isVacancyScopedView} vacancyId={selectedVacancyContext?.vacancyId || null} vacancyTitle={selectedVacancyContext?.title || null} />
 
-            <Button
-              type="button"
-              variant="outline"
-              className="h-9 px-3"
-              onClick={() => {
-                setTrashOpen(true);
-                void loadTrash();
-              }}
-            >
-              Trash ({trashCandidates.length})
+            <Button type="button" variant="outline" className="h-9 px-3" onClick={() => { setTrashOpen(true); void loadTrash(); }}>
+              Кошик ({trashCandidates.length})
             </Button>
 
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-[120px] h-9">
-                <SelectValue placeholder="Sort" />
-              </SelectTrigger>
+              <SelectTrigger className="w-[140px] h-9"><SelectValue placeholder="Сортування" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="name">Name</SelectItem>
-                <SelectItem value="progress">Progress</SelectItem>
-                <SelectItem value="deadline">Deadline</SelectItem>
+                <SelectItem value="name">Ім'я</SelectItem>
+                <SelectItem value="progress">Прогрес</SelectItem>
+                <SelectItem value="deadline">Термін</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -462,70 +454,39 @@ export function Board() {
       </header>
 
       <div className="flex-1 p-5 overflow-hidden">
-        {error && (
-          <div className="mb-3 rounded-lg border border-red-200 bg-red-50 text-red-600 px-3 py-2 text-[12px]">
-            {error}
-          </div>
-        )}
+        {error && <div className="mb-3 rounded-lg border border-red-200 bg-red-50 text-red-600 px-3 py-2 text-[12px]">{error}</div>}
 
         {isLoading && !hasLoaded ? (
-          <div className="text-[13px] text-neutral-500">Loading candidates...</div>
+          <div className="text-[13px] text-neutral-500">Завантажуємо кандидатів...</div>
         ) : (
           <div className="h-full flex flex-col gap-3">
             <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/90 dark:bg-neutral-900/80 px-3.5 py-2.5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2.5">
-                <span className="text-[12px] font-medium text-neutral-500 dark:text-neutral-400">
-                  Vacancy for funnel:
-                </span>
+                <span className="text-[12px] font-medium text-neutral-500 dark:text-neutral-400">Вакансія для воронки:</span>
                 <Select value={selectedJob} onValueChange={setSelectedJob}>
-                  <SelectTrigger className="w-[220px] h-9">
-                    <SelectValue placeholder="Select vacancy" />
-                  </SelectTrigger>
+                  <SelectTrigger className="w-[220px] h-9"><SelectValue placeholder="Оберіть вакансію" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Vacancies</SelectItem>
-                    {jobOptions.map((job) => (
-                      <SelectItem key={job.id} value={`job|${job.id}|${job.title}`}>
-                        {job.title}
-                      </SelectItem>
-                    ))}
-                    {legacyPositionOptions.map((position) => (
-                      <SelectItem key={`legacy:${position}`} value={`legacy:${position}`}>
-                        {position} (legacy)
-                      </SelectItem>
-                    ))}
+                    <SelectItem value="all">Усі вакансії</SelectItem>
+                    {jobOptions.map((job) => (<SelectItem key={job.id} value={`job|${job.id}|${job.title}`}>{job.title}</SelectItem>))}
+                    {legacyPositionOptions.map((position) => (<SelectItem key={`legacy:${position}`} value={`legacy:${position}`}>{position} (архівна)</SelectItem>))}
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="text-[12px] text-neutral-500 dark:text-neutral-400">
-                {selectedJob === 'all'
-                  ? `${selectedJobCandidatesCount} candidates total`
-                  : `${selectedJobCandidatesCount} candidates${
-                      selectedJobInfo ? ` - ${selectedJobInfo.department}` : ''
-                    }`}
+                {selectedJob === 'all' ? `${selectedJobCandidatesCount} кандидатів по всіх вакансіях` : `${selectedJobCandidatesCount} кандидатів${selectedJobInfo ? ` - ${translateDepartment(selectedJobInfo.department)}` : ''}`}
               </div>
             </div>
 
+            <div className="text-[12px] text-neutral-500 dark:text-neutral-400 px-1">
+              {isAllVacanciesView ? 'Оберіть одну вакансію, щоб активувати додавання кандидата і працювати в її воронці.' : isLegacyView ? 'Архівний перегляд позиції доступний лише для перегляду. Щоб додати кандидата, оберіть пов’язану вакансію.' : `Кандидат буде доданий одразу у воронку вакансії ${selectedVacancyContext?.title}.`}
+            </div>
+
             <div ref={kanbanRef} className="kanban-scroll flex-1">
-              <DndContext
-                sensors={sensors}
-                collisionDetection={rectIntersection}
-                onDragStart={handleDragStart}
-                onDragOver={handleDragOver}
-                onDragEnd={handleDragEnd}
-              >
+              <DndContext sensors={sensors} collisionDetection={rectIntersection} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
                 <div className="flex gap-5 min-w-max h-full">
                   {columns.map((col) => (
-                    <Column
-                      key={col.id}
-                      id={col.id}
-                      title={col.title}
-                      dotColor={col.dotColor}
-                      candidates={getCandidatesByStatus(col.id)}
-                      onViewAnalysis={setAnalysisCandidate}
-                      onOpenProfile={handleOpenProfile}
-                      onAdvance={handleAdvance}
-                    />
+                    <Column key={col.id} id={col.id} title={col.title} dotColor={col.dotColor} candidates={getVisibleCandidatesByStatus(col.id)} onViewAnalysis={setAnalysisCandidate} onOpenProfile={handleOpenProfile} onAdvance={handleAdvance} />
                   ))}
                 </div>
 
@@ -545,119 +506,52 @@ export function Board() {
       </div>
 
       <ResumeAnalysisModal candidate={analysisCandidate} onClose={() => setAnalysisCandidate(null)} />
+      <CandidateDrawer candidate={profileCandidate} onClose={() => setProfileCandidate(null)} onSaved={() => { setProfileCandidate(null); void loadCandidates(); }} />
 
-      <CandidateDrawer
-        candidate={profileCandidate}
-        onClose={() => setProfileCandidate(null)}
-        onSaved={() => {
-          setProfileCandidate(null);
-          void loadCandidates();
-        }}
-      />
-
-      <Dialog
-        open={Boolean(candidateToReject)}
-        onOpenChange={(open) => {
-          if (!open) {
-            handleCancelReject();
-          }
-        }}
-      >
+      <Dialog open={Boolean(candidateToReject)} onOpenChange={(open) => { if (!open) { handleCancelReject(); } }}>
         <DialogContent className="sm:max-w-[420px]">
           <DialogHeader>
-            <DialogTitle>Reject candidate?</DialogTitle>
-            <DialogDescription>
-              {candidateToReject
-                ? `Move ${candidateToReject.name} ${candidateToReject.surname} to rejected status?`
-                : 'Move selected candidate to rejected status?'}
-            </DialogDescription>
+            <DialogTitle>Відхилити кандидата?</DialogTitle>
+            <DialogDescription>{candidateToReject ? `Перевести ${candidateToReject.name} ${candidateToReject.surname} у статус відхиленого?` : 'Перевести вибраного кандидата у статус відхиленого?'}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
-              Rejection reason *
-            </label>
-            <Input
-              value={rejectReason}
-              onChange={(event) => setRejectReason(event.target.value)}
-              placeholder="e.g. Missing required experience"
-              disabled={isRejecting}
-            />
+            <label className="text-sm font-medium text-neutral-700 dark:text-neutral-200">Причина відхилення *</label>
+            <Input value={rejectReason} onChange={(event) => setRejectReason(event.target.value)} placeholder="Наприклад: бракує потрібного досвіду" disabled={isRejecting} />
           </div>
 
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={handleCancelReject} disabled={isRejecting}>
-              Cancel
-            </Button>
-            <Button
-              onClick={() => void handleConfirmReject()}
-              disabled={isRejecting || !rejectReason.trim()}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              {isRejecting ? 'Rejecting...' : 'Confirm'}
-            </Button>
+            <Button variant="outline" onClick={handleCancelReject} disabled={isRejecting}>Скасувати</Button>
+            <Button onClick={() => void handleConfirmReject()} disabled={isRejecting || !rejectReason.trim()} className="bg-red-600 hover:bg-red-700 text-white">{isRejecting ? 'Відхиляємо...' : 'Підтвердити'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <Dialog
-        open={trashOpen}
-        onOpenChange={(open) => {
-          setTrashOpen(open);
-          if (open) {
-            void loadTrash();
-          }
-        }}
-      >
+      <Dialog open={trashOpen} onOpenChange={(open) => { setTrashOpen(open); if (open) { void loadTrash(); } }}>
         <DialogContent className="sm:max-w-[720px]">
           <DialogHeader>
-            <DialogTitle>Trash</DialogTitle>
-            <DialogDescription>
-              Rejected candidates are auto-deleted after {trashRetentionDays} days.
-            </DialogDescription>
+            <DialogTitle>Кошик</DialogTitle>
+            <DialogDescription>Відхилені кандидати автоматично видаляються через {trashRetentionDays} днів.</DialogDescription>
           </DialogHeader>
 
-          {trashError && (
-            <p className="text-sm text-red-500">{trashError}</p>
-          )}
+          {trashError && <p className="text-sm text-red-500">{trashError}</p>}
 
           <div className="max-h-[420px] overflow-auto rounded-md border border-neutral-200 dark:border-neutral-800">
             {isTrashLoading ? (
-              <p className="p-4 text-sm text-neutral-500">Loading trash...</p>
+              <p className="p-4 text-sm text-neutral-500">Завантажуємо кошик...</p>
             ) : trashCandidates.length === 0 ? (
-              <p className="p-4 text-sm text-neutral-500">Trash is empty.</p>
+              <p className="p-4 text-sm text-neutral-500">Кошик порожній.</p>
             ) : (
               <div className="divide-y divide-neutral-200 dark:divide-neutral-800">
                 {trashCandidates.map((candidate) => (
                   <div key={candidate.id} className="p-3 flex items-center justify-between gap-4">
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">
-                        {candidate.name} {candidate.surname}
-                      </p>
-                      <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">
-                        {candidate.position || 'No position'}
-                      </p>
-                      {candidate.rejectionReason && (
-                        <p className="text-xs text-red-500 dark:text-red-400 truncate">
-                          Reason: {candidate.rejectionReason}
-                        </p>
-                      )}
-                      <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                        Delete after:{' '}
-                        {candidate.trashDeleteAfter
-                          ? new Date(candidate.trashDeleteAfter).toLocaleDateString()
-                          : 'n/a'}
-                      </p>
+                      <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">{candidate.name} {candidate.surname}</p>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">{candidate.position || 'Без зазначеної посади'}</p>
+                      {candidate.rejectionReason && <p className="text-xs text-red-500 dark:text-red-400 truncate">Причина: {candidate.rejectionReason}</p>}
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400">Буде видалено: {candidate.trashDeleteAfter ? new Date(candidate.trashDeleteAfter).toLocaleDateString() : 'немає даних'}</p>
                     </div>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      onClick={() => void handleRestoreCandidate(candidate.id)}
-                      disabled={isRestoringId === candidate.id}
-                    >
-                      {isRestoringId === candidate.id ? 'Restoring...' : 'Restore'}
-                    </Button>
+                    <Button type="button" size="sm" variant="outline" onClick={() => void handleRestoreCandidate(candidate.id)} disabled={isRestoringId === candidate.id}>{isRestoringId === candidate.id ? 'Відновлюємо...' : 'Відновити'}</Button>
                   </div>
                 ))}
               </div>

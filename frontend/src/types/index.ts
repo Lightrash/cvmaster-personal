@@ -79,11 +79,82 @@ export interface ResumeAnalysis {
     summary: string;
     education: string;
     languages: string[];
+    scoringMeta?: Record<string, unknown>;
+}
+
+export interface MatchConfidence {
+    matchConfidenceScore: number;
+    flags: string[];
+    reasons: string[];
+}
+
+export interface MatchRoleContext {
+    jobRoleFamily: string;
+    candidateRoleFamily: string;
+    jobFamilyConfidence: number;
+    candidateFamilyConfidence: number;
+    roleContextAlignment: number;
+    roleContextConfidence: number;
+    alignmentBand: 'strong' | 'medium' | 'weak' | 'neutral' | string;
+    rawAdjustment: number;
+    effectiveAdjustment: number;
+    adjustmentReason: string;
+    jobFamilyEvidence?: Record<string, unknown> | null;
+    candidateFamilyEvidence?: Record<string, unknown> | null;
+}
+
+export interface MatchPenaltiesApplied {
+    missingCriticalCount?: number;
+    criticalPenaltyAdjustment: number;
+    confidenceAdjustment: number;
+    roleContextAdjustment: number;
+    severeSemanticMismatchPenalty?: number;
+    severeSemanticMismatchAdjustment: number;
+    total: number;
+}
+
+export interface NeuralSimilarityComponents {
+    neuralOverallAlignment: number;
+    neuralSkillsAlignment: number;
+    neuralExperienceAlignment: number;
+}
+
+export interface NeuralSemanticTextsUsed {
+    candidateOverall?: string;
+    vacancyOverall?: string;
+    candidateSkills?: string;
+    vacancySkills?: string;
+    candidateExperience?: string;
+    vacancyExperience?: string;
+}
+
+export interface NeuralBreakdown {
+    semanticTextsUsed?: NeuralSemanticTextsUsed;
+    neuralSimilarityComponents: NeuralSimilarityComponents | null;
+    neuralWeights?: {
+        overall: number;
+        skills: number;
+        experience: number;
+    };
+    semanticSharedConcepts?: string[];
+    providerStatus?: string;
+    providerFlags?: string[];
+    providerReasons?: string[];
+}
+
+export interface FinalScoreComposition {
+    neuralMatchScore: number | null;
+    ruleBasedMatchScore: number;
+    finalMatchScore: number;
+    dominantSource?: 'neural' | 'rule-based-fallback' | string;
 }
 
 // --- Match Result ---
 export interface MatchResult {
     matchPercentage: number;
+    neuralMatchScore?: number | null;
+    ruleBasedMatchScore?: number | null;
+    finalMatchScore?: number;
     strengths: string[];
     gaps: string[];
     recommendation: 'Proceed' | 'Review manually' | 'Reject';
@@ -99,7 +170,20 @@ export interface MatchResult {
         matchedSkill: string | null;
         tier: 'exact' | 'synonym' | 'related' | 'none';
         score: number;
+        matchSource?: 'exact' | 'synonym-group' | 'related-group' | 'token-overlap' | 'none';
+        requiredCanonical?: string | null;
+        matchedCanonical?: string | null;
+        matchedTierScore?: number;
     }>;
+    neuralBreakdown?: NeuralBreakdown | null;
+    confidence?: MatchConfidence | null;
+    roleContext?: MatchRoleContext | null;
+    penaltiesApplied?: MatchPenaltiesApplied | null;
+    scoringMeta?: Record<string, unknown>;
+    providerStatus?: string;
+    providerFlags?: string[];
+    providerReasons?: string[];
+    finalScoreComposition?: FinalScoreComposition | null;
 }
 
 export interface AuthUser {
